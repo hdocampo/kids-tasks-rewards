@@ -2571,6 +2571,82 @@
       async function init() {
         setLoading(true);
 
+        const debugEl = document.createElement("div");
+        debugEl.style.cssText =
+          "position:fixed;top:0;left:0;right:0;background:#ffff00;color:#000;font-size:11px;padding:8px;z-index:9999;word-break:break-all;font-family:monospace;";
+        debugEl.id = "debugBar";
+        document.body.appendChild(debugEl);
+
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+        const {
+          data: { session },
+        } = await sb.auth.getSession();
+        debugEl.textContent =
+          "URL: " +
+          window.location.href +
+          " | session: " +
+          (session ? "SI" : "NO") +
+          " | code: " +
+          (code ? "SI: " + code.slice(0, 15) : "NO");
+
+        if (!session && !code) {
+          setLoading(false);
+          document.getElementById("authScreen").classList.add("show");
+          return;
+        }
+
+        if (code && !session) {
+          const { data, error: exchErr } =
+            await sb.auth.exchangeCodeForSession(code);
+          debugEl.textContent +=
+            " | exchange: " + (exchErr ? "ERROR: " + exchErr.message : "OK");
+          if (exchErr) {
+            setLoading(false);
+            document.getElementById("authScreen").classList.add("show");
+            return;
+          }
+          if (data.session) {
+            window.history.replaceState(null, "", window.location.pathname);
+            S.user = data.session.user;
+            const { data: parent } = await sb
+              .from("parents")
+              .select("*")
+              .eq("id", S.user.id)
+              .single();
+            if (!parent) {
+              setLoading(false);
+              document.getElementById("onboardScreen").classList.add("show");
+              return;
+            }
+            S.parent = parent;
+            await loadAll();
+            showPinLock(S.parent);
+            return;
+          }
+        }
+
+        if (session) {
+          S.user = session.user;
+          const { data: parent } = await sb
+            .from("parents")
+            .select("*")
+            .eq("id", S.user.id)
+            .single();
+          if (!parent) {
+            setLoading(false);
+            document.getElementById("onboardScreen").classList.add("show");
+            return;
+          }
+          S.parent = parent;
+          await loadAll();
+          showPinLock(S.parent);
+        }
+      }
+      // ─── INIT END ─────────────────────────────────
+      async function init() {
+        setLoading(true);
+
         // Handle OAuth redirect callback (critical for PWA on Safari iOS)
         const hash = window.location.hash;
         const query = window.location.search;
