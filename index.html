@@ -736,25 +736,39 @@ function showScreen(id,btn){
 async function init(){
   setLoading(true);
 
-  // Safari fix: si hay hash con access_token esperamos a onAuthStateChange
+  // Safari PWA standalone fix
   if(window.location.hash&&window.location.hash.includes('access_token')){
-    // Supabase va a disparar onAuthStateChange, no hacer nada acá
-    // Timeout de seguridad por si no dispara
-    setTimeout(()=>{
-      if(!S.user){
-        setLoading(false);
-        document.getElementById('authScreen').classList.add('show');
-      }
-    },4000);
+    setTimeout(()=>{if(!S.user){setLoading(false);document.getElementById('authScreen').classList.add('show');}},4000);
     return;
   }
 
-  const{data:{session}}=await sb.auth.getSession();
+  let{data:{session}}=await sb.auth.getSession();
+
+  // Si Supabase no encontró sesión, intentar recuperarla del localStorage manual
+  if(!session){
+    try{
+      const saved=localStorage.getItem('tasky-session');
+      if(saved){
+        const parsed=JSON.parse(saved);
+        // Intentar restaurar con el refresh token
+        if(parsed.refresh_token){
+          const{data,error}=await sb.auth.refreshSession({refresh_token:parsed.refresh_token});
+          if(!error&&data.session){
+            session=data.session;
+          }else{
+            localStorage.removeItem('tasky-session');
+          }
+        }
+      }
+    }catch(e){}
+  }
+
   if(!session){
     setLoading(false);
     document.getElementById('authScreen').classList.add('show');
     return;
   }
+
   S.user=session.user;
   const{data:parent}=await sb.from('parents').select('*').eq('id',S.user.id).single();
   if(!parent){setLoading(false);document.getElementById('onboardScreen').classList.add('show');return;}
