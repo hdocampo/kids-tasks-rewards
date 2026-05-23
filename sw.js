@@ -1,10 +1,10 @@
 // ============================================
-// Kids Tasks Rewards — Service Worker
-// Autor: [Tu Nombre]
+// Tasky — Service Worker
+// Autor: Hugo Ocampo - hdocampo@gmail.com
 // Versión: 1.0.0
 // ============================================
 
-const CACHE_NAME = 'kidstasksrewards-v1';
+const CACHE_NAME = 'tasky-v1';
 const ASSETS = [
   '/',
   '/index.html',

@@ -1,8 +1,8 @@
 {
-  "name": "Kids Tasks Rewards",
-  "short_name": "KidsTasksR",
-  "description": "Chores and rewards app for kids. Developed by [Tu Nombre].",
-  "author": "[Tu Nombre]",
+  "name": "Tasky",
+  "short_name": "Tasky",
+  "description": "Creador de tareas y recompensas para tus hijos para que comiencen a colaborar con tareas del hogar. Developed by Hugo Ocampo.",
+  "author": "Hugo Ocampo",
   "version": "1.0.0",
   "start_url": "/",
   "display": "standalone",
