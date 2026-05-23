@@ -395,7 +395,12 @@ const authStorage={
 };
 
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY,{
-  auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true,storage:authStorage}
+  auth:{
+    flowType:'implicit',
+    detectSessionInUrl:true,
+    persistSession:true,
+    storage:authStorage,
+  }
 });
 
 const RARITIES={common:{label:'Común',color:'#9e7b62'},rare:{label:'Raro',color:'#3a70b0'},epic:{label:'Épico',color:'#6a3aa0'},legendary:{label:'Legendario',color:'#8a6000'}};
@@ -736,28 +741,12 @@ async function init(){
   setLoading(true);
   debug('init() — URL: '+window.location.href);
 
-  const params=new URLSearchParams(window.location.search);
-  const code=params.get('code');
-  debug('code: '+(code?code.slice(0,20)+'...':'NO'));
-
-  if(code){
-    debug('Intentando exchangeCodeForSession...');
-    const{data,error}=await sb.auth.exchangeCodeForSession(code);
-    debug('exchange result — error: '+(error?error.message:'ninguno')+' | session: '+(data?.session?'SI':'NO'));
-    if(!error&&data?.session){
-      window.history.replaceState(null,'',window.location.pathname);
-      S.user=data.session.user;
-      const{data:parent}=await sb.from('parents').select('*').eq('id',S.user.id).single();
-      if(!parent){setLoading(false);document.getElementById('onboardScreen').classList.add('show');return;}
-      S.parent=parent;
-      await loadAll();
-      showPinLock(S.parent);
-      return;
-    }
-  }
+  // Con implicit flow Supabase detecta el token del hash automáticamente
+  // Solo esperamos a que getSession lo procese
+  await new Promise(r=>setTimeout(r,500));
 
   const{data:{session}}=await sb.auth.getSession();
-  debug('getSession — session: '+(session?'SI':'NO'));
+  debug('getSession — session: '+(session?'SI':'NO')+' | hash: '+window.location.hash.slice(0,30));
 
   if(!session){
     setLoading(false);
