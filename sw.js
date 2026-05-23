@@ -1,56 +1,33 @@
 // ============================================
 // Tasky — Service Worker
-// Autor: Hugo Ocampo - hdocampo@gmail.com
-// Versión: 1.0.0
+// Autor: Hugo Ocampo
+// Versión: 1.0.1
 // ============================================
 
-const CACHE_NAME = 'tasky-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
-];
+const CACHE_NAME = 'tasky-v2'; // <-- incrementar esto en cada deploy
 
-// INSTALL — cachear assets
+// No cacheamos nada por ahora — network first siempre
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
-// ACTIVATE — limpiar caches viejos
 self.addEventListener('activate', e => {
+  // Eliminar todos los caches viejos
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+      Promise.all(keys.map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
 
-// FETCH — network first, cache fallback
+// Network only — nunca servir desde cache
 self.addEventListener('fetch', e => {
-  // No interceptar requests de Supabase (siempre online)
-  if (e.request.url.includes('supabase.co')) return;
-
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        // Guardar copia fresca en cache
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(e.request, copy));
-        return res;
-      })
-      .catch(() => caches.match(e.request))
-  );
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
 
-// PUSH NOTIFICATIONS (base para futuro)
+// Push notifications
 self.addEventListener('push', e => {
-  const data = e.data?.json() || { title: 'FamilyQuest', body: '¡Tenés nuevas tareas!' };
+  const data = e.data?.json() || { title: 'Tasky', body: '¡Tenés nuevas tareas!' };
   e.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
@@ -60,4 +37,3 @@ self.addEventListener('push', e => {
     })
   );
 });
-// kidstasksrewards.app
