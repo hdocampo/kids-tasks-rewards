@@ -7,10 +7,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Tasky">
-<!-- fuerza recarga en Safari al cambiar versión -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Tasky</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -20,19 +20,27 @@
 body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height:100vh;}
 .screen{display:none;min-height:100vh;padding-bottom:88px;}
 .screen.active{display:block;}
+
+/* LOADING */
 .loading-overlay{position:fixed;inset:0;background:#fff;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .4s;}
 .loading-overlay.hidden{opacity:0;pointer-events:none;}
 .spinner{width:40px;height:40px;border:4px solid #ede8e0;border-top-color:#7c5cbf;border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#2d1a0e;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:998;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;}
-.auth-screen{display:none;position:fixed;inset:0;background:linear-gradient(160deg,#f0eaf8 0%,#f7f3ee 100%);z-index:400;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;}
+
+/* AUTH */
+.auth-screen{display:none;position:fixed;inset:0;z-index:400;flex-direction:column;align-items:center;justify-content:flex-start;background:linear-gradient(160deg,#ffe9c6 0%,#f7dbe9 100%);overflow:hidden;}
 .auth-screen.show{display:flex;}
-.auth-logo{font-size:72px;margin-bottom:16px;}
-.auth-title{font-size:28px;font-weight:900;color:#2d1a0e;margin-bottom:8px;}
-.auth-sub{font-size:15px;font-weight:600;color:#9e8a7a;margin-bottom:40px;line-height:1.5;}
-.google-btn{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #ede8e0;border-radius:16px;padding:14px 28px;font-size:16px;font-weight:800;color:#2d1a0e;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:all .15s;}
-.google-btn:active{transform:scale(.97);}
+.auth-bg{width:100%;display:block;}
+.auth-bottom{position:absolute;bottom:10px;left:0;right:0;padding:0 24px;}
+.google-btn{display:flex;align-items:center;justify-content:center;background:#7c5cbf;border:none;border-radius:18px;padding:14px 20px;font-size:15px;font-weight:900;color:#fff;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 24px rgba(124,92,191,.45);transition:all .15s;width:100%;}
+.google-btn svg{margin-right:10px;flex-shrink:0;}
+.google-btn:active{transform:scale(.97);opacity:.9;}
+
+/* ONBOARDING */
 .onboard-screen{display:none;position:fixed;inset:0;background:#fff;z-index:450;flex-direction:column;padding:60px 24px 40px;overflow-y:auto;}
 .onboard-screen.show{display:flex;}
 .onboard-title{font-size:24px;font-weight:900;color:#2d1a0e;margin-bottom:6px;}
@@ -56,10 +64,14 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .pin-err{font-size:12px;font-weight:700;color:#e06060;text-align:center;min-height:16px;margin-bottom:8px;}
 .ob-step{display:none;}
 .ob-step.active{display:block;}
+
+/* PIN LOCK */
 .pin-lock{display:none;position:fixed;inset:0;background:#fff;z-index:480;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
 .pin-lock.show{display:flex;}
 .pin-lock .pin-pad{width:300px;}
 .pin-lock .pin-key{padding:18px;font-size:22px;}
+
+/* NAV */
 .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ede8e0;display:flex;z-index:100;padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px));}
 .nav-btn{flex:1;padding:6px 4px 2px;text-align:center;border:none;background:none;color:#bbb;cursor:pointer;font-size:10px;font-family:'Nunito',sans-serif;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:2px;}
 .nav-btn.active{color:#7c5cbf;}
@@ -67,15 +79,21 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .nav-btn.active .nav-icon-wrap{background:#7c5cbf;}
 .nav-icon{font-size:20px;transition:filter .2s;}
 .nav-btn.active .nav-icon{filter:brightness(0) invert(1);}
+
+/* HEADER */
 .header{background:#fff;padding:52px 20px 16px;position:relative;}
 .hola{font-size:13px;color:#9e8a7a;font-weight:700;}
 .kid-name{font-size:30px;font-weight:900;color:#2d1a0e;line-height:1.1;}
 .avatar-circle{width:60px;height:60px;border-radius:50%;border:3px solid #f0e8d8;background:#f0e8d8;position:absolute;top:46px;right:20px;display:flex;align-items:center;justify-content:center;font-size:34px;}
 .avatar-star{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;background:#f5c842;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:9px;}
+
+/* KID TABS */
 .kid-tabs{display:flex;gap:10px;padding:14px 16px 0;overflow-x:auto;scrollbar-width:none;}
 .kid-tabs::-webkit-scrollbar{display:none;}
 .kid-tab{flex-shrink:0;padding:10px 14px;border-radius:14px;border:1.5px solid #e8e0d5;background:#fff;color:#9e8a7a;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;font-family:'Nunito',sans-serif;}
 .kid-tab.active{border-color:#7c5cbf;color:#fff;background:linear-gradient(135deg,#8b6cd0,#6a4aaf);}
+
+/* BANNER */
 .banner-section{margin:16px 16px 0;border-radius:22px;background:linear-gradient(135deg,#7c5cbf 0%,#9370d8 40%,#6a4aaf 100%);padding:18px 16px 0;overflow:hidden;position:relative;}
 .banner-sparkle{position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.15) 0%,transparent 60%);pointer-events:none;}
 .banner-promo{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:900;color:#fff;letter-spacing:.5px;margin-bottom:10px;}
@@ -95,6 +113,8 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .rc-pts-badge.rare{background:#dce8f8;color:#3a5aab;}
 .rc-pts-badge.epic{background:#ece4f8;color:#6a3aab;}
 .rc-pts-badge.legendary{background:#fdf0c0;color:#8a6000;}
+
+/* LEVEL CARD */
 .level-card{margin:12px 16px 0;background:#fff;border-radius:18px;padding:14px 16px;position:relative;overflow:hidden;}
 .lc-top{display:flex;justify-content:space-between;align-items:flex-start;}
 .lc-title{font-size:14px;font-weight:900;color:#2d1a0e;}
@@ -105,8 +125,12 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .lc-bar{height:8px;background:#f0e8dc;border-radius:5px;overflow:hidden;margin-top:10px;}
 .lc-bar-fill{height:100%;background:linear-gradient(90deg,#c8914a,#e0a050);border-radius:5px;transition:width .6s ease;}
 .lc-bar-row{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#9e8a7a;margin-bottom:5px;margin-top:10px;}
+
+/* ACTIVE REWARD */
 .active-rw-card{margin:10px 16px 0;background:#fff8ef;border:1.5px solid #f5deb8;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
 .arc-chevron{color:#c8a882;font-size:18px;font-weight:700;margin-left:auto;}
+
+/* TASKS */
 .tasks-section-lbl{padding:14px 16px 8px;font-size:11px;font-weight:900;color:#9e8a7a;text-transform:uppercase;letter-spacing:.6px;}
 .task-item{display:flex;align-items:center;gap:12px;padding:13px 16px;background:#fff;margin:0 16px 8px;border-radius:16px;cursor:pointer;border:1.5px solid transparent;}
 .task-item.done{background:#f5f5f5;border-color:#eee;}
@@ -121,6 +145,8 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .streak-pill{display:inline-flex;align-items:center;gap:6px;background:#fff8ef;border:1.5px solid #f5deb8;border-radius:20px;padding:6px 14px;font-size:13px;color:#c8820a;font-weight:800;margin:6px 16px 0;}
 .sobre-btn{margin:14px 16px 0;background:linear-gradient(135deg,#8b6cd0,#6a4aaf);color:#fff;border:none;padding:15px 20px;border-radius:16px;font-size:16px;font-weight:900;cursor:pointer;width:calc(100% - 32px);font-family:'Nunito',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;}
 .sobre-btn:disabled{opacity:.4;cursor:default;}
+
+/* SHEETS */
 .overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:200;align-items:flex-end;justify-content:center;}
 .overlay.show{display:flex;}
 .sheet{background:#fff;border-radius:26px 26px 0 0;padding:24px 18px 40px;width:100%;max-width:440px;animation:slideUp .35s ease;}
@@ -130,6 +156,8 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .sheet-sub{font-size:13px;font-weight:700;color:#9e8a7a;text-align:center;margin-bottom:18px;}
 .choice-item{display:flex;align-items:center;gap:14px;padding:13px;background:#f7f3ee;border:1.5px solid #ede8e0;border-radius:16px;margin-bottom:10px;cursor:pointer;font-family:'Nunito',sans-serif;}
 .choice-item:active{transform:scale(.98);border-color:#8b6cd0;}
+
+/* PHOTO MODAL */
 .photo-modal{display:none;position:fixed;inset:0;background:#00000088;z-index:300;align-items:flex-end;justify-content:center;}
 .photo-modal.show{display:flex;}
 .photo-inner{background:#fff;border-radius:26px 26px 0 0;padding:20px 18px 36px;width:100%;max-width:440px;animation:slideUp .35s ease;}
@@ -144,6 +172,8 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .msg-input::placeholder{color:#c4b0a0;}
 .btn-primary{background:linear-gradient(135deg,#8b6cd0,#6a4aaf);color:#fff;border:none;padding:14px;border-radius:14px;font-size:15px;font-weight:900;cursor:pointer;width:100%;margin-top:8px;font-family:'Nunito',sans-serif;}
 .btn-outline{background:#fff;color:#7c5cbf;border:2px solid #d4c0ec;padding:12px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;width:100%;margin-top:8px;font-family:'Nunito',sans-serif;}
+
+/* DAD */
 .dad-card{background:#fff;border-radius:18px;margin:10px 16px;padding:16px;}
 .dad-card-title{font-size:14px;font-weight:900;color:#2d1a0e;margin-bottom:12px;}
 .dad-input{width:100%;background:#f7f3ee;border:1.5px solid #ede8e0;border-radius:11px;padding:10px 12px;color:#2d1a0e;font-size:13px;font-family:'Nunito',sans-serif;font-weight:700;margin:4px 0;}
@@ -187,13 +217,18 @@ input:focus,select:focus{outline:2px solid #8b6cd0;outline-offset:1px;border-rad
 
 <!-- AUTH -->
 <div class="auth-screen" id="authScreen">
-  <div class="auth-logo">🏠</div>
-  <div class="auth-title">Tasky</div>
-  <div class="auth-sub">Organizá las tareas del hogar,<br>recompensá a tus hijos y registrá todo.</div>
-  <button class="google-btn" onclick="loginWithGoogle()">
-    <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-    Continuar con Google
-  </button>
+  <img class="auth-bg" src="icons/splash.png" alt="Tasky">
+  <div class="auth-bottom">
+    <button class="google-btn" onclick="loginWithGoogle()">
+      <svg width="22" height="22" viewBox="0 0 24 24" style="margin-right:10px;flex-shrink:0;">
+        <path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Entrar con Google
+    </button>
+  </div>
 </div>
 
 <!-- ONBOARDING -->
@@ -268,7 +303,7 @@ input:focus,select:focus{outline:2px solid #8b6cd0;outline-offset:1px;border-rad
 <!-- PHOTO MODAL -->
 <div class="photo-modal" id="photoModal">
   <div class="photo-inner">
-    <h3>📸 Mandar evidencia a papá</h3>
+    <h3>📸 Mandar evidencia</h3>
     <div class="photo-preview" id="photoPreview" onclick="document.getElementById('photoInput').click()">
       <span id="photoPlaceholder">Tocá para sacar foto 📷</span>
       <img id="photoImg" style="display:none" src="" alt="">
@@ -389,20 +424,13 @@ input:focus,select:focus{outline:2px solid #8b6cd0;outline-offset:1px;border-rad
 <script>
 const SUPA_URL='https://uosxwtjonxileaqcirwb.supabase.co';
 const SUPA_KEY='sb_publishable_gKWzhzpTHcfG5yFJPo5AuA_JlfU2S6N';
-
 const authStorage={
-  getItem:(k)=>{try{return localStorage.getItem(k);}catch{return sessionStorage.getItem(k);}},
-  setItem:(k,v)=>{try{localStorage.setItem(k,v);}catch{sessionStorage.setItem(k,v);}},
-  removeItem:(k)=>{try{localStorage.removeItem(k);}catch{sessionStorage.removeItem(k);}},
+  getItem:(k)=>{try{return localStorage.getItem(k);}catch{try{return sessionStorage.getItem(k);}catch{return null;}}},
+  setItem:(k,v)=>{try{localStorage.setItem(k,v);}catch{try{sessionStorage.setItem(k,v);}catch{}}},
+  removeItem:(k)=>{try{localStorage.removeItem(k);}catch{try{sessionStorage.removeItem(k);}catch{}}},
 };
-
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY,{
-  auth:{
-    flowType:'implicit',
-    detectSessionInUrl:true,
-    persistSession:true,
-    storage:authStorage,
-  }
+  auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,storageKey:'tasky-auth',storage:authStorage,autoRefreshToken:true}
 });
 
 const RARITIES={common:{label:'Común',color:'#9e7b62'},rare:{label:'Raro',color:'#3a70b0'},epic:{label:'Épico',color:'#6a3aa0'},legendary:{label:'Legendario',color:'#8a6000'}};
@@ -436,12 +464,13 @@ function isWeakPin(pin){
 }
 
 async function loginWithGoogle(){
-  await sb.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo:window.location.origin}
-  });
+  await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});
 }
-async function signOut(){await sb.auth.signOut();location.reload();}
+async function signOut(){
+  try{localStorage.removeItem('tasky-session');}catch(e){}
+  await sb.auth.signOut();
+  location.reload();
+}
 
 function renderPinDisplay(id,pin){
   const el=document.getElementById(id);
@@ -530,8 +559,7 @@ function requestParentPanel(btn){if(S.parent)showPinLock(S.parent);}
 async function loadAll(){
   if(!S.user||!S.parent)return;
   setLoading(true);
-  const pid=S.user.id;
-  const wk=getWeekKey();
+  const pid=S.user.id,wk=getWeekKey();
   const[kR,tR,rR,eR]=await Promise.all([
     sb.from('kids').select('*').eq('parent_id',pid).order('created_at'),
     sb.from('tasks').select('*').eq('parent_id',pid).order('created_at'),
@@ -581,7 +609,6 @@ function renderKidScreen(){
   document.getElementById('activeRewardWrap').innerHTML=ar
     ?`<div class="active-rw-card"><span style="font-size:28px">${ar.emoji}</span><div><div style="font-size:10px;font-weight:900;color:#c8820a;text-transform:uppercase;">🏆 Recompensa activa</div><div style="font-size:14px;font-weight:800;color:#2d1a0e;margin-top:1px;">${ar.name}</div><div style="font-size:11px;font-weight:700;color:${RARITIES[ar.rarity]?.color||'#888'};margin-top:1px;">${RARITIES[ar.rarity]?.label||''}</div></div><span class="arc-chevron">›</span></div>`
     :`<div class="active-rw-card"><div style="color:#c4b0a0;font-size:13px;font-weight:700;">⭐ Completá tareas y ganate una recompensa</div><span class="arc-chevron">›</span></div>`;
-  const wk=getWeekKey();
   const kidTasks=S.tasks.filter(t=>t.kid_id==='both'||t.kid_id===kid.id);
   document.getElementById('kidTaskList').innerHTML=kidTasks.length?kidTasks.map(t=>{
     const done=S.completions.find(c=>c.kid_id===kid.id&&c.task_id===t.id);
@@ -735,40 +762,25 @@ function showScreen(id,btn){
 
 async function init(){
   setLoading(true);
-
-  // Safari PWA standalone fix
   if(window.location.hash&&window.location.hash.includes('access_token')){
     setTimeout(()=>{if(!S.user){setLoading(false);document.getElementById('authScreen').classList.add('show');}},4000);
     return;
   }
-
   let{data:{session}}=await sb.auth.getSession();
-
-  // Si Supabase no encontró sesión, intentar recuperarla del localStorage manual
   if(!session){
     try{
       const saved=localStorage.getItem('tasky-session');
       if(saved){
         const parsed=JSON.parse(saved);
-        // Intentar restaurar con el refresh token
         if(parsed.refresh_token){
           const{data,error}=await sb.auth.refreshSession({refresh_token:parsed.refresh_token});
-          if(!error&&data.session){
-            session=data.session;
-          }else{
-            localStorage.removeItem('tasky-session');
-          }
+          if(!error&&data.session)session=data.session;
+          else localStorage.removeItem('tasky-session');
         }
       }
     }catch(e){}
   }
-
-  if(!session){
-    setLoading(false);
-    document.getElementById('authScreen').classList.add('show');
-    return;
-  }
-
+  if(!session){setLoading(false);document.getElementById('authScreen').classList.add('show');return;}
   S.user=session.user;
   const{data:parent}=await sb.from('parents').select('*').eq('id',S.user.id).single();
   if(!parent){setLoading(false);document.getElementById('onboardScreen').classList.add('show');return;}
@@ -779,20 +791,18 @@ async function init(){
 
 sb.auth.onAuthStateChange(async(event,session)=>{
   if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED')&&session){
-    if(S.user)return; // ya procesado
+    try{localStorage.setItem('tasky-session',JSON.stringify(session));}catch(e){}
+    if(S.user)return;
     S.user=session.user;
     document.getElementById('authScreen').classList.remove('show');
     setLoading(true);
     const{data:parent}=await sb.from('parents').select('*').eq('id',S.user.id).single();
-    if(!parent){
-      setLoading(false);
-      document.getElementById('onboardScreen').classList.add('show');
-      return;
-    }
+    if(!parent){setLoading(false);document.getElementById('onboardScreen').classList.add('show');return;}
     S.parent=parent;
     await loadAll();
     showPinLock(S.parent);
   }
+  if(event==='SIGNED_OUT'){try{localStorage.removeItem('tasky-session');}catch(e){}S.user=null;S.parent=null;}
 });
 
 init();
