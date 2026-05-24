@@ -34,7 +34,10 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 /* AUTH */
 .auth-screen{display:none;position:fixed;inset:0;z-index:400;flex-direction:column;align-items:center;justify-content:flex-start;background:linear-gradient(160deg,#ffe9c6 0%,#f7dbe9 100%);overflow:hidden;}
 .auth-screen.show{display:flex;}
-.auth-bg{width:100%;display:block;margin-top:-10px;}
+.auth-bg{width: 90%;
+    position: absolute;
+    display: block;
+    bottom: -9px;}
 .auth-bottom{position:absolute;bottom:0;left:0;right:0;padding:16px 24px 36px;background:#ffe9c6;}
 .google-btn{display:flex;align-items:center;justify-content:center;background:#7c5cbf;border:none;border-radius:18px;padding:14px 20px;font-size:15px;font-weight:900;color:#fff;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 24px rgba(124,92,191,.45);transition:all .15s;width:100%;}
 .google-btn svg{margin-right:10px;flex-shrink:0;}
