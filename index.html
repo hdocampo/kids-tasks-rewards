@@ -4,14 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#7c5cbf">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tasky">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Tasky</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -34,12 +26,8 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 /* AUTH */
 .auth-screen{display:none;position:fixed;inset:0;z-index:400;flex-direction:column;align-items:center;justify-content:flex-start;background:linear-gradient(160deg,#ffe9c6 0%,#f7dbe9 100%);overflow:hidden;}
 .auth-screen.show{display:flex;}
-.auth-bg{width: 90%;
-    position: absolute;
-    display: block;
-    bottom: -9px;
-    }
-.auth-bottom{position:absolute;bottom:10px;left:0;right:0;padding:0 24px;}
+.auth-bg{width:100%;display:block;margin-top:-10px;}
+.auth-bottom{position:absolute;bottom:0;left:0;right:0;padding:16px 24px 36px;background:#ffe9c6;}
 .google-btn{display:flex;align-items:center;justify-content:center;background:#7c5cbf;border:none;border-radius:18px;padding:14px 20px;font-size:15px;font-weight:900;color:#fff;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 24px rgba(124,92,191,.45);transition:all .15s;width:100%;}
 .google-btn svg{margin-right:10px;flex-shrink:0;}
 .google-btn:active{transform:scale(.97);opacity:.9;}
@@ -161,14 +149,17 @@ body{font-family:'Nunito',sans-serif;background:#f7f3ee;color:#2d1a0e;min-height
 .choice-item{display:flex;align-items:center;gap:14px;padding:13px;background:#f7f3ee;border:1.5px solid #ede8e0;border-radius:16px;margin-bottom:10px;cursor:pointer;font-family:'Nunito',sans-serif;}
 .choice-item:active{transform:scale(.98);border-color:#8b6cd0;}
 
-/* PHOTO MODAL */
+/* TASK COMPLETE MODAL */
 .photo-modal{display:none;position:fixed;inset:0;background:#00000088;z-index:300;align-items:flex-end;justify-content:center;}
 .photo-modal.show{display:flex;}
 .photo-inner{background:#fff;border-radius:26px 26px 0 0;padding:20px 18px 36px;width:100%;max-width:440px;animation:slideUp .35s ease;}
 .photo-inner h3{font-size:17px;font-weight:900;color:#2d1a0e;margin-bottom:12px;}
-.photo-preview{width:100%;height:110px;background:#f7f3ee;border:2px dashed #d4c4b0;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#9e8a7a;font-size:13px;font-weight:700;cursor:pointer;margin:10px 0;overflow:hidden;}
-.photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:12px;}
-#photoInput{display:none;}
+
+/* EMOJI PICKER */
+.emoji-picker{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px;background:#f7f3ee;border-radius:14px;padding:12px;}
+.ep-emoji{font-size:28px;cursor:pointer;padding:4px;border-radius:8px;border:2px solid transparent;transition:all .15s;}
+.ep-emoji.sel{background:#f0eafb;border-color:#8b6cd0;}
+.ep-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
 .emoji-row{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0 10px;}
 .emoji-btn{font-size:22px;background:#f7f3ee;border:1.5px solid #ede8e0;border-radius:10px;padding:5px 9px;cursor:pointer;}
 .emoji-btn.sel{border-color:#8b6cd0;background:#f0eafb;}
@@ -221,7 +212,7 @@ input:focus,select:focus{outline:2px solid #8b6cd0;outline-offset:1px;border-rad
 
 <!-- AUTH -->
 <div class="auth-screen" id="authScreen">
-  <img class="auth-bg" src="icons/splash.png" alt="Tasky">
+  <img class="auth-bg" src="icons/splash.png" alt="Tasky" onerror="this.style.border='3px solid red'">
   <div class="auth-bottom">
     <button class="google-btn" onclick="loginWithGoogle()">
       <svg width="22" height="22" viewBox="0 0 24 24" style="margin-right:10px;flex-shrink:0;">
@@ -304,16 +295,11 @@ input:focus,select:focus{outline:2px solid #8b6cd0;outline-offset:1px;border-rad
   </div>
 </div>
 
-<!-- PHOTO MODAL -->
+<!-- TASK COMPLETE MODAL -->
 <div class="photo-modal" id="photoModal">
   <div class="photo-inner">
-    <h3>📸 Mandar evidencia</h3>
-    <div class="photo-preview" id="photoPreview" onclick="document.getElementById('photoInput').click()">
-      <span id="photoPlaceholder">Tocá para sacar foto 📷</span>
-      <img id="photoImg" style="display:none" src="" alt="">
-    </div>
-    <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="handlePhoto(event)">
-    <div style="font-size:12px;color:#9e8a7a;font-weight:700;margin:2px 0;">¿Cómo te sentís?</div>
+    <h3>✅ Marcar como completada</h3>
+    <div style="font-size:12px;color:#9e8a7a;font-weight:700;margin:8px 0 4px;">¿Cómo te sentís?</div>
     <div class="emoji-row">
       <span class="emoji-btn" onclick="toggleEmoji(this,'🔥')">🔥</span>
       <span class="emoji-btn" onclick="toggleEmoji(this,'✅')">✅</span>
@@ -323,8 +309,8 @@ input:focus,select:focus{outline:2px solid #8b6cd0;outline-offset:1px;border-rad
       <span class="emoji-btn" onclick="toggleEmoji(this,'🏆')">🏆</span>
       <span class="emoji-btn" onclick="toggleEmoji(this,'🎉')">🎉</span>
     </div>
-    <input class="msg-input" id="photoMsg" placeholder="Mensaje..." maxlength="80">
-    <button class="btn-primary" onclick="submitPhoto()">Enviar 📨</button>
+    <input class="msg-input" id="photoMsg" placeholder="Mensaje para papá/mamá... (opcional)" maxlength="80">
+    <button class="btn-primary" onclick="submitPhoto()">Completar tarea ✅</button>
     <button class="btn-outline" onclick="closePhotoModal()">Cancelar</button>
   </div>
 </div>
@@ -374,7 +360,11 @@ input:focus,select:focus{outline:2px solid #8b6cd0;outline-offset:1px;border-rad
   </div>
   <div class="dad-card">
     <div class="dad-card-title">📝 Agregar tarea</div>
-    <input class="dad-input" id="newTaskName" placeholder="Nueva tarea..." maxlength="40">
+    <input class="dad-input" id="newTaskName" placeholder="Nombre de la tarea..." maxlength="40">
+    <div style="font-size:11px;font-weight:800;color:#9e8a7a;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 4px;">Elegí un ícono</div>
+    <div class="emoji-picker-wrap">
+      <div class="ep-grid" id="taskEmojiPicker"></div>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0;">
       <select class="dad-select" id="newTaskPts"><option value="5">5 pts</option><option value="10" selected>10 pts</option><option value="15">15 pts</option><option value="20">20 pts</option></select>
       <select class="dad-select" id="newTaskKid"><option value="both">Todos</option></select>
@@ -445,7 +435,19 @@ const WEAK_PINS=['123456','654321','111111','222222','333333','444444','555555',
 let S={user:null,parent:null,currentKid:null,kids:[],tasks:[],rewards:[],completions:[],evidence:[],selectedEmojis:[],photoData:null,currentPhotoTask:null};
 let obPin='',obPin2='',lockPin='',obParentGender='';
 
-function kidEmoji(g){return g==='girl'?'👧':g==='boy'?'👦':'🧒';}
+const TASK_EMOJIS=['🛏️','👕','🍽️','🫧','🧹','🍳','🧺','🪴','📚','🛒','🐾','🗑️','🧴','🪥','🧽','🧸','🎒','🚿','🐕','🌿','🍱','🥗','🧇','🥤','🪣','🏠'];
+let selectedTaskEmoji=TASK_EMOJIS[0];
+
+function initTaskEmojiPicker(){
+  const el=document.getElementById('taskEmojiPicker');
+  if(!el)return;
+  el.innerHTML=TASK_EMOJIS.map(e=>`<span class="ep-emoji${e===selectedTaskEmoji?' sel':''}" onclick="selectTaskEmoji(this,'${e}')">${e}</span>`).join('');
+}
+function selectTaskEmoji(el,emoji){
+  selectedTaskEmoji=emoji;
+  document.querySelectorAll('.ep-emoji').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
 function parentEmoji(g){return g==='mother'?'👩':'👨';}
 function getWeekKey(){const d=new Date(),s=new Date(d);s.setDate(d.getDate()-d.getDay()+1);return s.toISOString().slice(0,10);}
 function getKidObj(){return S.kids.find(k=>k.id===S.currentKid);}
@@ -629,34 +631,19 @@ function renderKidScreen(){
 function switchKid(id){S.currentKid=id;renderKidScreen();}
 
 function handleTaskClick(taskId){
-  S.currentPhotoTask=taskId;S.selectedEmojis=[];S.photoData=null;
-  document.getElementById('photoImg').style.display='none';
-  document.getElementById('photoPlaceholder').style.display='flex';
+  S.currentPhotoTask=taskId;S.selectedEmojis=[];
   document.getElementById('photoMsg').value='';
   document.querySelectorAll('.emoji-btn').forEach(e=>e.classList.remove('sel'));
   document.getElementById('photoModal').classList.add('show');
 }
 function closePhotoModal(){document.getElementById('photoModal').classList.remove('show');}
 function toggleEmoji(el,emoji){el.classList.toggle('sel');S.selectedEmojis=el.classList.contains('sel')?[...S.selectedEmojis,emoji]:S.selectedEmojis.filter(e=>e!==emoji);}
-function handlePhoto(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=r=>{S.photoData=r.result;document.getElementById('photoImg').src=r.result;document.getElementById('photoImg').style.display='block';document.getElementById('photoPlaceholder').style.display='none';};
-  reader.readAsDataURL(file);
-}
 async function submitPhoto(){
   const taskId=S.currentPhotoTask;if(!taskId)return;
   const kid=getKidObj();const task=S.tasks.find(t=>t.id===taskId);const wk=getWeekKey();
   setLoading(true);
-  let photoUrl=null;
-  if(S.photoData){
-    const blob=await(await fetch(S.photoData)).blob();
-    const fname=`${kid.id}_${taskId}_${Date.now()}.jpg`;
-    const{data}=await sb.storage.from('evidence-photos').upload(fname,blob,{contentType:'image/jpeg',upsert:true});
-    if(data){const{data:u}=sb.storage.from('evidence-photos').getPublicUrl(fname);photoUrl=u.publicUrl;}
-  }
   await sb.from('completions').insert({kid_id:kid.id,task_id:taskId,week_key:wk});
-  await sb.from('evidence').insert({kid_id:kid.id,task_id:taskId,task_name:task.name,emojis:S.selectedEmojis.join(' '),message:document.getElementById('photoMsg').value.trim(),photo_url:photoUrl});
+  await sb.from('evidence').insert({kid_id:kid.id,task_id:taskId,task_name:task.name,emojis:S.selectedEmojis.join(' '),message:document.getElementById('photoMsg').value.trim(),photo_url:null});
   await sb.from('kids').update({pts:(kid.pts||0)+task.pts,total_pts:(kid.total_pts||0)+task.pts}).eq('id',kid.id);
   closePhotoModal();setLoading(false);showToast('¡Tarea completada! +'+task.pts+' pts 🎉');
   await loadAll();
@@ -705,9 +692,10 @@ function renderDadScreen(){
 async function addTask(){
   const name=document.getElementById('newTaskName').value.trim();if(!name)return;
   const pts=parseInt(document.getElementById('newTaskPts').value),kid_id=document.getElementById('newTaskKid').value;
-  const emojis=['📌','🧹','🫧','🍽️','🛏️','👕','🍳','🧺','🪴','📚','🛒','🐾'];
-  await sb.from('tasks').insert({name,pts,kid_id,emoji:emojis[Math.floor(Math.random()*emojis.length)],parent_id:S.user.id});
-  document.getElementById('newTaskName').value='';showToast('Tarea agregada ✅');await loadAll();renderDadScreen();
+  await sb.from('tasks').insert({name,pts,kid_id,emoji:selectedTaskEmoji,parent_id:S.user.id});
+  document.getElementById('newTaskName').value='';
+  selectedTaskEmoji=TASK_EMOJIS[0];initTaskEmojiPicker();
+  showToast('Tarea agregada ✅');await loadAll();renderDadScreen();
 }
 async function deleteTask(id){await sb.from('tasks').delete().eq('id',id);await loadAll();renderDadScreen();}
 async function addReward(){
@@ -760,7 +748,7 @@ function showScreen(id,btn){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');if(btn)btn.classList.add('active');
-  if(id==='screenDad')renderDadScreen();
+  if(id==='screenDad'){renderDadScreen();initTaskEmojiPicker();}
   if(id==='screenHistory')renderHistory();
 }
 
@@ -811,8 +799,11 @@ sb.auth.onAuthStateChange(async(event,session)=>{
 
 init();
 
+// SPA mode — service worker desactivado para compatibilidad con Google OAuth
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  navigator.serviceWorker.getRegistrations().then(regs=>{
+    regs.forEach(r=>r.unregister());
+  });
 }
 </script>
 </body>
