@@ -2580,6 +2580,7 @@
       // ══════════════════════════════════════
       function enterParentMode() {
         const pg = S.parent.gender;
+        console.log("parent object:", JSON.stringify(S.parent)); // DEBUG
         document.getElementById("navDadIcon").textContent = parentEmoji(pg);
         document.getElementById("navDadLabel").textContent =
           pg === "mother" ? "Mamá" : "Papá";
