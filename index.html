@@ -2477,7 +2477,7 @@
         setLoading(true);
         const { data: family, error } = await sb
           .from("parents")
-          .select("id,name,gender,family_code")
+          .select("*")
           .eq("family_code", fc)
           .single();
         if (error || !family) {
