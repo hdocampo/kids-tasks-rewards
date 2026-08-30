@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
     />
     <meta name="theme-color" content="#7c5cbf" />
     <title>Tasky</title>
@@ -13,7 +13,6 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
       * {
         box-sizing: border-box;
@@ -1385,36 +1384,42 @@
             maxlength="1"
             type="tel"
             oninput="codeDigit(this, 0)"
+            onkeydown="codeBack(event, this, 0)"
           />
           <input
             class="code-digit"
             maxlength="1"
             type="tel"
             oninput="codeDigit(this, 1)"
+            onkeydown="codeBack(event, this, 1)"
           />
           <input
             class="code-digit"
             maxlength="1"
             type="tel"
             oninput="codeDigit(this, 2)"
+            onkeydown="codeBack(event, this, 2)"
           />
           <input
             class="code-digit"
             maxlength="1"
             type="tel"
             oninput="codeDigit(this, 3)"
+            onkeydown="codeBack(event, this, 3)"
           />
           <input
             class="code-digit"
             maxlength="1"
             type="tel"
             oninput="codeDigit(this, 4)"
+            onkeydown="codeBack(event, this, 4)"
           />
           <input
             class="code-digit"
             maxlength="1"
             type="tel"
             oninput="codeDigit(this, 5)"
+            onkeydown="codeBack(event, this, 5)"
           />
         </div>
         <div class="pin-err" id="codeErr"></div>
@@ -2451,14 +2456,26 @@
       // KID ENTRY FLOW
       // ══════════════════════════════════════
       function codeDigit(input, idx) {
-        input.value = input.value.slice(-1);
+        // Solo permitir un dígito
+        input.value = input.value.replace(/\D/g, "").slice(-1);
         const digits = document.querySelectorAll(".code-digit");
         if (input.value && idx < 5) digits[idx + 1].focus();
-        if (idx === 5 && input.value) {
-          const code = Array.from(digits)
-            .map((d) => d.value)
-            .join("");
-          if (code.length === 6) submitFamilyCode(code);
+        // Auto submit cuando están todos
+        const code = Array.from(digits)
+          .map((d) => d.value)
+          .join("");
+        if (code.length === 6) submitFamilyCode(code);
+      }
+      function codeBack(event, input, idx) {
+        const digits = document.querySelectorAll(".code-digit");
+        if (event.key === "Backspace") {
+          if (input.value) {
+            input.value = "";
+          } else if (idx > 0) {
+            digits[idx - 1].focus();
+            digits[idx - 1].value = "";
+          }
+          event.preventDefault();
         }
       }
       async function submitFamilyCode(code) {
