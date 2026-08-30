@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
       * {
         box-sizing: border-box;
@@ -24,14 +25,6 @@
         background: #f7f3ee;
         color: #2d1a0e;
         min-height: 100vh;
-      }
-      .screen {
-        display: none;
-        min-height: 100vh;
-        padding-bottom: 88px;
-      }
-      .screen.active {
-        display: block;
       }
 
       /* LOADING */
@@ -85,32 +78,39 @@
         opacity: 1;
       }
 
-      /* AUTH — registro primera vez */
-      .auth-screen {
+      /* SCREENS */
+      .screen {
         display: none;
         position: fixed;
         inset: 0;
-        z-index: 500;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        background: linear-gradient(160deg, #ffe9c6 0%, #f7dbe9 100%);
-        overflow: hidden;
+        overflow-y: auto;
+        background: #f7f3ee;
       }
-      .auth-screen.show {
-        display: flex;
+      .screen.active {
+        display: block;
       }
+      .app-screen {
+        display: none;
+        min-height: 100vh;
+        padding-bottom: 88px;
+      }
+      .app-screen.active {
+        display: block;
+      }
+
+      /* AUTH */
       .auth-bg {
         width: 100%;
         display: block;
+        position: absolute;
+        top: -130px;
       }
       .auth-bottom {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
         padding: 16px 24px 36px;
         background: #ffe9c6;
+        position: absolute;
+        width: 100%;
+        bottom: -20px;
       }
       .google-btn {
         display: flex;
@@ -137,23 +137,34 @@
       }
 
       /* ONBOARDING */
-      .onboard-screen {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: #fff;
-        z-index: 550;
-        flex-direction: column;
+      .ob-content {
         padding: 60px 24px 40px;
-        overflow-y: auto;
-      }
-      .onboard-screen.show {
-        display: flex;
       }
       .ob-step {
         display: none;
       }
       .ob-step.active {
+        display: block;
+      }
+      .ob-title {
+        font-size: 24px;
+        font-weight: 900;
+        color: #2d1a0e;
+        margin-bottom: 6px;
+      }
+      .ob-sub {
+        font-size: 14px;
+        font-weight: 600;
+        color: #9e8a7a;
+        margin-bottom: 28px;
+      }
+      .ob-label {
+        font-size: 12px;
+        font-weight: 800;
+        color: #9e8a7a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
         display: block;
       }
       .ob-input {
@@ -170,15 +181,6 @@
       }
       .ob-input::placeholder {
         color: #c4b0a0;
-      }
-      .ob-label {
-        font-size: 12px;
-        font-weight: 800;
-        color: #9e8a7a;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 6px;
-        display: block;
       }
       .gender-row {
         display: grid;
@@ -209,89 +211,72 @@
         color: #2d1a0e;
       }
 
-      /* PROFILE SELECTOR */
-      .profile-screen {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 400;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        background: linear-gradient(160deg, #ffe9c6 0%, #f7dbe9 100%);
-        overflow-y: auto;
-      }
-      .profile-screen.show {
-        display: flex;
-      }
-      .profile-splash {
-        width: 100%;
-        display: block;
-      }
-      .profile-bottom {
-        width: 100%;
-        padding: 16px 20px 40px;
-      }
-      .profile-title {
-        font-size: 18px;
-        font-weight: 900;
-        color: #4a2f1a;
-        text-align: center;
-        margin-bottom: 16px;
-      }
-      .profiles-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-      }
-      .profile-card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 16px 8px;
-        text-align: center;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.2s;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-      }
-      .profile-card:active {
-        transform: scale(0.96);
-      }
-      .profile-card.parent-card {
-        border-color: #e8c99a;
-        background: #fdf3e7;
-      }
-      .profile-card-icon {
-        font-size: 42px;
-        display: block;
-        margin-bottom: 8px;
-      }
-      .profile-card-name {
-        font-size: 13px;
-        font-weight: 800;
-        color: #2d1a0e;
-      }
-      .profile-card-role {
-        font-size: 10px;
-        font-weight: 600;
-        color: #9e8a7a;
-        margin-top: 2px;
-      }
-
-      /* PIN */
-      .pin-screen {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: #fff;
-        z-index: 480;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+      /* KID ENTRY */
+      .kid-entry-content {
         padding: 40px 24px;
       }
-      .pin-screen.show {
+      .kid-entry-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #2d1a0e;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+      .kid-entry-sub {
+        font-size: 14px;
+        font-weight: 600;
+        color: #9e8a7a;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      .code-input-wrap {
         display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .code-digit {
+        flex: 1;
+        height: 52px;
+        border-radius: 12px;
+        border: 2px solid #ede8e0;
+        background: #fff;
+        font-size: 22px;
+        font-weight: 900;
+        text-align: center;
+        font-family: "Nunito", sans-serif;
+        color: #7c5cbf;
+      }
+      .code-digit:focus {
+        outline: none;
+        border-color: #7c5cbf;
+      }
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 16px 0;
+        color: #9e8a7a;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #ede8e0;
+      }
+      #qr-canvas {
+        display: block;
+        margin: 0 auto;
+        border-radius: 12px;
+      }
+
+      /* PIN PAD */
+      .pin-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .pin-display {
         display: flex;
@@ -359,55 +344,41 @@
         min-height: 16px;
       }
 
-      /* SET KID PIN */
-      .overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: #00000088;
-        z-index: 600;
-        align-items: flex-end;
-        justify-content: center;
-      }
-      .overlay.show {
+      /* KID LIST */
+      .kid-list {
         display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
       }
-      .sheet {
+      .kid-list-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
         background: #fff;
-        border-radius: 26px 26px 0 0;
-        padding: 24px 18px 40px;
-        width: 100%;
-        max-width: 440px;
-        animation: slideUp 0.35s ease;
+        border-radius: 16px;
+        padding: 14px 16px;
+        border: 1.5px solid #ede8e0;
+        cursor: pointer;
+        transition: all 0.15s;
       }
-      @keyframes slideUp {
-        from {
-          transform: translateY(100%);
-        }
-        to {
-          transform: translateY(0);
-        }
+      .kid-list-item:active {
+        transform: scale(0.98);
+        border-color: #7c5cbf;
       }
-      .sheet-handle {
-        width: 40px;
-        height: 4px;
-        background: #e0d8d0;
-        border-radius: 2px;
-        margin: 0 auto 18px;
+      .kid-list-icon {
+        font-size: 36px;
       }
-      .sheet-title {
-        font-size: 20px;
-        font-weight: 900;
+      .kid-list-name {
+        font-size: 16px;
+        font-weight: 800;
         color: #2d1a0e;
-        text-align: center;
-        margin-bottom: 4px;
       }
-      .sheet-sub {
-        font-size: 13px;
-        font-weight: 700;
+      .kid-list-role {
+        font-size: 12px;
+        font-weight: 600;
         color: #9e8a7a;
-        text-align: center;
-        margin-bottom: 18px;
+        margin-top: 2px;
       }
 
       /* NAV */
@@ -418,9 +389,12 @@
         right: 0;
         background: #fff;
         border-top: 1px solid #ede8e0;
-        display: flex;
+        display: none;
         z-index: 100;
         padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px));
+      }
+      .nav.visible {
+        display: flex;
       }
       .nav-btn {
         flex: 1;
@@ -470,15 +444,15 @@
         color: #9e8a7a;
         font-weight: 700;
       }
-      .kid-name {
-        font-size: 30px;
+      .page-title {
+        font-size: 28px;
         font-weight: 900;
         color: #2d1a0e;
         line-height: 1.1;
       }
       .avatar-circle {
-        width: 60px;
-        height: 60px;
+        width: 56px;
+        height: 56px;
         border-radius: 50%;
         border: 3px solid #f0e8d8;
         background: #f0e8d8;
@@ -488,53 +462,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 34px;
-      }
-      .avatar-star {
-        position: absolute;
-        bottom: -2px;
-        right: -2px;
-        width: 20px;
-        height: 20px;
-        background: #f5c842;
-        border-radius: 50%;
-        border: 2px solid #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 9px;
-      }
-
-      /* KID TABS */
-      .kid-tabs {
-        display: flex;
-        gap: 10px;
-        padding: 14px 16px 0;
-        overflow-x: auto;
-        scrollbar-width: none;
-      }
-      .kid-tabs::-webkit-scrollbar {
-        display: none;
-      }
-      .kid-tab {
-        flex-shrink: 0;
-        padding: 10px 14px;
-        border-radius: 14px;
-        border: 1.5px solid #e8e0d5;
-        background: #fff;
-        color: #9e8a7a;
-        font-size: 13px;
-        font-weight: 800;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        font-family: "Nunito", sans-serif;
-      }
-      .kid-tab.active {
-        border-color: #7c5cbf;
-        color: #fff;
-        background: linear-gradient(135deg, #8b6cd0, #6a4aaf);
+        font-size: 30px;
       }
 
       /* BANNER */
@@ -553,10 +481,7 @@
       }
       .banner-sparkle {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         background: radial-gradient(
           circle at 80% 20%,
           rgba(255, 255, 255, 0.15) 0%,
@@ -578,7 +503,7 @@
         margin-bottom: 10px;
       }
       .banner-title {
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 900;
         color: #fff;
         line-height: 1.2;
@@ -604,7 +529,7 @@
         display: none;
       }
       .reward-card {
-        min-width: 100px;
+        min-width: 96px;
         background: #fff;
         border-radius: 16px;
         padding: 12px 8px 10px;
@@ -621,8 +546,8 @@
         background: #fdf8e0;
       }
       .rc-emoji {
-        font-size: 44px;
-        line-height: 52px;
+        font-size: 40px;
+        line-height: 48px;
         display: block;
         margin: 0 auto 6px;
       }
@@ -635,7 +560,7 @@
       }
       .rc-pts-badge {
         display: inline-block;
-        padding: 3px 12px;
+        padding: 3px 10px;
         border-radius: 20px;
         font-size: 11px;
         font-weight: 800;
@@ -675,11 +600,11 @@
         position: absolute;
         right: 60px;
         top: 8px;
-        font-size: 52px;
+        font-size: 48px;
         line-height: 1;
       }
       .lc-pts {
-        font-size: 34px;
+        font-size: 32px;
         font-weight: 900;
         color: #2d1a0e;
         text-align: right;
@@ -721,7 +646,7 @@
       }
 
       /* TASKS */
-      .tasks-section-lbl {
+      .section-lbl {
         padding: 14px 16px 8px;
         font-size: 11px;
         font-weight: 900;
@@ -743,6 +668,9 @@
       .task-item.done {
         background: #f5f5f5;
         border-color: #eee;
+      }
+      .task-item.readonly {
+        cursor: default;
       }
       .task-check {
         width: 26px;
@@ -831,115 +759,7 @@
         cursor: default;
       }
 
-      /* MODALS */
-      .choose-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: #00000088;
-        z-index: 200;
-        align-items: flex-end;
-        justify-content: center;
-      }
-      .choose-overlay.show {
-        display: flex;
-      }
-      .photo-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: #00000088;
-        z-index: 300;
-        align-items: flex-end;
-        justify-content: center;
-      }
-      .photo-modal.show {
-        display: flex;
-      }
-      .modal-inner {
-        background: #fff;
-        border-radius: 26px 26px 0 0;
-        padding: 24px 18px 40px;
-        width: 100%;
-        max-width: 440px;
-        animation: slideUp 0.35s ease;
-      }
-      .emoji-row {
-        display: flex;
-        gap: 7px;
-        flex-wrap: wrap;
-        margin: 6px 0 10px;
-      }
-      .emoji-btn {
-        font-size: 22px;
-        background: #f7f3ee;
-        border: 1.5px solid #ede8e0;
-        border-radius: 10px;
-        padding: 5px 9px;
-        cursor: pointer;
-      }
-      .emoji-btn.sel {
-        border-color: #8b6cd0;
-        background: #f0eafb;
-      }
-      .msg-input {
-        width: 100%;
-        background: #f7f3ee;
-        border: 1.5px solid #ede8e0;
-        border-radius: 12px;
-        padding: 11px 14px;
-        color: #2d1a0e;
-        font-size: 14px;
-        font-family: "Nunito", sans-serif;
-        font-weight: 600;
-        margin: 4px 0;
-      }
-      .msg-input::placeholder {
-        color: #c4b0a0;
-      }
-      .choice-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 13px;
-        background: #f7f3ee;
-        border: 1.5px solid #ede8e0;
-        border-radius: 16px;
-        margin-bottom: 10px;
-        cursor: pointer;
-      }
-      .choice-item:active {
-        transform: scale(0.98);
-        border-color: #8b6cd0;
-      }
-      .btn-primary {
-        background: linear-gradient(135deg, #8b6cd0, #6a4aaf);
-        color: #fff;
-        border: none;
-        padding: 14px;
-        border-radius: 14px;
-        font-size: 15px;
-        font-weight: 900;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 8px;
-        font-family: "Nunito", sans-serif;
-      }
-      .btn-outline {
-        background: #fff;
-        color: #7c5cbf;
-        border: 2px solid #d4c0ec;
-        padding: 12px;
-        border-radius: 14px;
-        font-size: 14px;
-        font-weight: 800;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 8px;
-        font-family: "Nunito", sans-serif;
-      }
-
-      /* DAD */
+      /* PARENT PANEL */
       .dad-card {
         background: #fff;
         border-radius: 18px;
@@ -1051,7 +871,7 @@
       }
       .set-pin-btn {
         font-size: 11px;
-        padding: 5px 12px;
+        padding: 5px 10px;
         border-radius: 9px;
         border: 1.5px solid #d4c0ec;
         cursor: pointer;
@@ -1105,15 +925,41 @@
         justify-content: center;
         margin-top: 8px;
       }
-      .hist-row {
+
+      /* KID SUMMARY in dad panel */
+      .kid-summary-card {
+        background: #f7f3ee;
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+      }
+      .kid-summary-top {
         display: flex;
         align-items: center;
-        gap: 9px;
-        padding: 10px 16px;
-        border-bottom: 1px solid #f0ece8;
-        background: #fff;
-        margin: 0 16px 4px;
-        border-radius: 12px;
+        gap: 12px;
+      }
+      .kid-summary-pts {
+        font-size: 22px;
+        font-weight: 900;
+        color: #7c5cbf;
+      }
+      .kid-summary-lbl {
+        font-size: 11px;
+        color: #9e8a7a;
+        font-weight: 700;
+      }
+      .kid-tasks-preview {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .kid-task-preview-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
       }
 
       /* EMOJI PICKER */
@@ -1130,7 +976,7 @@
         gap: 6px;
       }
       .ep-emoji {
-        font-size: 26px;
+        font-size: 24px;
         cursor: pointer;
         padding: 4px 6px;
         border-radius: 8px;
@@ -1140,6 +986,166 @@
       .ep-emoji.sel {
         background: #f0eafb;
         border-color: #8b6cd0;
+      }
+
+      /* MODALS */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #00000088;
+        z-index: 300;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal-sheet {
+        background: #fff;
+        border-radius: 26px 26px 0 0;
+        padding: 24px 18px 48px;
+        width: 100%;
+        max-width: 440px;
+        animation: slideUp 0.35s ease;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+      .sheet-handle {
+        width: 40px;
+        height: 4px;
+        background: #e0d8d0;
+        border-radius: 2px;
+        margin: 0 auto 18px;
+      }
+      .modal-title {
+        font-size: 20px;
+        font-weight: 900;
+        color: #2d1a0e;
+        text-align: center;
+        margin-bottom: 4px;
+      }
+      .modal-sub {
+        font-size: 13px;
+        font-weight: 700;
+        color: #9e8a7a;
+        text-align: center;
+        margin-bottom: 18px;
+      }
+      .choice-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 13px;
+        background: #f7f3ee;
+        border: 1.5px solid #ede8e0;
+        border-radius: 16px;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+      .choice-item:active {
+        transform: scale(0.98);
+        border-color: #8b6cd0;
+      }
+      .msg-input {
+        width: 100%;
+        background: #f7f3ee;
+        border: 1.5px solid #ede8e0;
+        border-radius: 12px;
+        padding: 11px 14px;
+        color: #2d1a0e;
+        font-size: 14px;
+        font-family: "Nunito", sans-serif;
+        font-weight: 600;
+        margin: 4px 0;
+      }
+      .msg-input::placeholder {
+        color: #c4b0a0;
+      }
+      .emoji-row {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin: 6px 0 10px;
+      }
+      .emoji-btn {
+        font-size: 22px;
+        background: #f7f3ee;
+        border: 1.5px solid #ede8e0;
+        border-radius: 10px;
+        padding: 5px 9px;
+        cursor: pointer;
+      }
+      .emoji-btn.sel {
+        border-color: #8b6cd0;
+        background: #f0eafb;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #8b6cd0, #6a4aaf);
+        color: #fff;
+        border: none;
+        padding: 14px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 900;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 8px;
+        font-family: "Nunito", sans-serif;
+      }
+      .btn-outline {
+        background: #fff;
+        color: #7c5cbf;
+        border: 2px solid #d4c0ec;
+        padding: 12px;
+        border-radius: 14px;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 8px;
+        font-family: "Nunito", sans-serif;
+      }
+
+      /* HIST */
+      .hist-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 16px;
+        border-bottom: 1px solid #f0ece8;
+        background: #fff;
+        margin: 0 16px 4px;
+        border-radius: 12px;
+      }
+
+      /* FAMILY CODE */
+      .family-code-box {
+        background: linear-gradient(135deg, #7c5cbf, #6a4aaf);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+      .family-code-lbl {
+        font-size: 11px;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+      }
+      .family-code-val {
+        font-size: 32px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 6px;
       }
 
       input:focus,
@@ -1169,8 +1175,10 @@
     </div>
     <div class="toast" id="toast"></div>
 
-    <!-- AUTH — solo primera vez -->
-    <div class="auth-screen" id="authScreen">
+    <!-- ══════════════════════════════════════
+     SCREEN: AUTH (padre, primera vez)
+══════════════════════════════════════ -->
+    <div class="screen" id="screenAuth">
       <img class="auth-bg" src="icons/splash.png" alt="Tasky" />
       <div class="auth-bottom">
         <button class="google-btn" onclick="loginWithGoogle()">
@@ -1202,295 +1210,462 @@
       </div>
     </div>
 
-    <!-- ONBOARDING -->
-    <div class="onboard-screen" id="onboardScreen">
-      <div
-        style="
-          font-size: 24px;
-          font-weight: 900;
-          color: #2d1a0e;
-          margin-bottom: 6px;
-        "
-      >
-        ¡Bienvenido/a! 👋
-      </div>
-      <div
-        style="
-          font-size: 14px;
-          font-weight: 600;
-          color: #9e8a7a;
-          margin-bottom: 28px;
-        "
-      >
-        Contanos sobre vos para empezar
-      </div>
-      <div class="ob-step active" id="obStep1">
-        <span class="ob-label">¿Cómo te llamás?</span>
-        <input
-          class="ob-input"
-          id="obName"
-          placeholder="Tu nombre..."
-          maxlength="30"
-        />
-        <span class="ob-label">¿Sos papá o mamá?</span>
-        <div class="gender-row">
+    <!-- ══════════════════════════════════════
+     SCREEN: ONBOARDING (padre)
+══════════════════════════════════════ -->
+    <div class="screen" id="screenOnboard">
+      <div class="ob-content">
+        <div class="ob-title">¡Bienvenido/a! 👋</div>
+        <div class="ob-sub">Configurá tu familia en Tasky</div>
+        <div class="ob-step active" id="obStep1">
+          <span class="ob-label">¿Cómo te llamás?</span>
+          <input
+            class="ob-input"
+            id="obName"
+            placeholder="Tu nombre..."
+            maxlength="30"
+          />
+          <span class="ob-label">¿Sos papá o mamá?</span>
+          <div class="gender-row">
+            <div
+              class="gender-card"
+              id="gcFather"
+              onclick="selectGender('father')"
+            >
+              <span class="gender-card-icon">👨</span>
+              <div class="gender-card-lbl">Papá</div>
+            </div>
+            <div
+              class="gender-card"
+              id="gcMother"
+              onclick="selectGender('mother')"
+            >
+              <span class="gender-card-icon">👩</span>
+              <div class="gender-card-lbl">Mamá</div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="obNext1()">Continuar →</button>
+        </div>
+        <div class="ob-step" id="obStep2">
           <div
-            class="gender-card"
-            id="gcFather"
-            onclick="selectParentGender('father')"
+            style="
+              font-size: 16px;
+              font-weight: 900;
+              color: #2d1a0e;
+              margin-bottom: 4px;
+            "
           >
-            <span class="gender-card-icon">👨</span>
-            <div class="gender-card-lbl">Papá</div>
+            Creá tu PIN de acceso
           </div>
           <div
-            class="gender-card"
-            id="gcMother"
-            onclick="selectParentGender('mother')"
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: #9e8a7a;
+              margin-bottom: 16px;
+            "
           >
-            <span class="gender-card-icon">👩</span>
-            <div class="gender-card-lbl">Mamá</div>
+            4 a 6 dígitos · Sin secuencias fáciles
           </div>
+          <div class="pin-wrap">
+            <div class="pin-display" id="obPinDisp"></div>
+            <div class="pin-pad">
+              <button class="pin-key" onclick="pinInput('ob', 1, '1')">1</button
+              ><button class="pin-key" onclick="pinInput('ob', 1, '2')">
+                2</button
+              ><button class="pin-key" onclick="pinInput('ob', 1, '3')">
+                3
+              </button>
+              <button class="pin-key" onclick="pinInput('ob', 1, '4')">4</button
+              ><button class="pin-key" onclick="pinInput('ob', 1, '5')">
+                5</button
+              ><button class="pin-key" onclick="pinInput('ob', 1, '6')">
+                6
+              </button>
+              <button class="pin-key" onclick="pinInput('ob', 1, '7')">7</button
+              ><button class="pin-key" onclick="pinInput('ob', 1, '8')">
+                8</button
+              ><button class="pin-key" onclick="pinInput('ob', 1, '9')">
+                9
+              </button>
+              <div></div>
+              <button class="pin-key" onclick="pinInput('ob', 1, '0')">0</button
+              ><button class="pin-key del" onclick="pinDel('ob', 1)">⌫</button>
+            </div>
+          </div>
+          <div class="pin-err" id="obPinErr"></div>
+          <button
+            class="btn-primary"
+            id="obPinBtn"
+            style="opacity: 0.4; pointer-events: none"
+            onclick="obNext2()"
+          >
+            Confirmar PIN
+          </button>
+          <button class="btn-outline" onclick="obBack(1)">← Atrás</button>
         </div>
-        <button class="btn-primary" onclick="obNext1()">Continuar →</button>
+        <div class="ob-step" id="obStep3">
+          <div
+            style="
+              font-size: 16px;
+              font-weight: 900;
+              color: #2d1a0e;
+              margin-bottom: 4px;
+            "
+          >
+            Confirmá tu PIN
+          </div>
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 600;
+              color: #9e8a7a;
+              margin-bottom: 16px;
+            "
+          >
+            Ingresalo de nuevo
+          </div>
+          <div class="pin-wrap">
+            <div class="pin-display" id="obPin2Disp"></div>
+            <div class="pin-pad">
+              <button class="pin-key" onclick="pinInput('ob', 2, '1')">1</button
+              ><button class="pin-key" onclick="pinInput('ob', 2, '2')">
+                2</button
+              ><button class="pin-key" onclick="pinInput('ob', 2, '3')">
+                3
+              </button>
+              <button class="pin-key" onclick="pinInput('ob', 2, '4')">4</button
+              ><button class="pin-key" onclick="pinInput('ob', 2, '5')">
+                5</button
+              ><button class="pin-key" onclick="pinInput('ob', 2, '6')">
+                6
+              </button>
+              <button class="pin-key" onclick="pinInput('ob', 2, '7')">7</button
+              ><button class="pin-key" onclick="pinInput('ob', 2, '8')">
+                8</button
+              ><button class="pin-key" onclick="pinInput('ob', 2, '9')">
+                9
+              </button>
+              <div></div>
+              <button class="pin-key" onclick="pinInput('ob', 2, '0')">0</button
+              ><button class="pin-key del" onclick="pinDel('ob', 2)">⌫</button>
+            </div>
+          </div>
+          <div class="pin-err" id="obPin2Err"></div>
+          <button class="btn-outline" onclick="obBack(2)">← Atrás</button>
+        </div>
       </div>
-      <div class="ob-step" id="obStep2">
-        <div
-          style="
-            font-size: 16px;
-            font-weight: 900;
-            color: #2d1a0e;
-            margin-bottom: 4px;
-          "
-        >
-          Creá tu PIN de acceso
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SCREEN: KID ENTRY (hijo ingresa)
+══════════════════════════════════════ -->
+    <div class="screen" id="screenKidEntry">
+      <div class="kid-entry-content">
+        <div style="font-size: 52px; text-align: center; margin-bottom: 12px">
+          🏠
         </div>
-        <div
+        <div class="kid-entry-title">Entrar a Tasky</div>
+        <div class="kid-entry-sub">
+          Ingresá el código de tu familia<br />o escaneá el QR que te mostró tu
+          papá/mamá
+        </div>
+        <span
           style="
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 800;
             color: #9e8a7a;
-            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
           "
+          >Código de 6 números</span
         >
-          Entre 4 y 6 dígitos · Sin secuencias fáciles
+        <div class="code-input-wrap" id="codeInputWrap">
+          <input
+            class="code-digit"
+            maxlength="1"
+            type="number"
+            min="0"
+            max="9"
+            oninput="codeDigit(this, 0)"
+          />
+          <input
+            class="code-digit"
+            maxlength="1"
+            type="number"
+            min="0"
+            max="9"
+            oninput="codeDigit(this, 1)"
+          />
+          <input
+            class="code-digit"
+            maxlength="1"
+            type="number"
+            min="0"
+            max="9"
+            oninput="codeDigit(this, 2)"
+          />
+          <input
+            class="code-digit"
+            maxlength="1"
+            type="number"
+            min="0"
+            max="9"
+            oninput="codeDigit(this, 3)"
+          />
+          <input
+            class="code-digit"
+            maxlength="1"
+            type="number"
+            min="0"
+            max="9"
+            oninput="codeDigit(this, 4)"
+          />
+          <input
+            class="code-digit"
+            maxlength="1"
+            type="number"
+            min="0"
+            max="9"
+            oninput="codeDigit(this, 5)"
+          />
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <div class="pin-display" id="obPinDisplay"></div>
-          <div class="pin-pad">
-            <button class="pin-key" onclick="obPinKey('1')">1</button
-            ><button class="pin-key" onclick="obPinKey('2')">2</button
-            ><button class="pin-key" onclick="obPinKey('3')">3</button>
-            <button class="pin-key" onclick="obPinKey('4')">4</button
-            ><button class="pin-key" onclick="obPinKey('5')">5</button
-            ><button class="pin-key" onclick="obPinKey('6')">6</button>
-            <button class="pin-key" onclick="obPinKey('7')">7</button
-            ><button class="pin-key" onclick="obPinKey('8')">8</button
-            ><button class="pin-key" onclick="obPinKey('9')">9</button>
-            <div></div>
-            <button class="pin-key" onclick="obPinKey('0')">0</button
-            ><button class="pin-key del" onclick="obPinDel()">⌫</button>
-          </div>
-        </div>
-        <div class="pin-err" id="obPinErr"></div>
-        <button
-          class="btn-primary"
-          onclick="obNext2()"
-          id="obPinConfirmBtn"
-          style="opacity: 0.4; pointer-events: none"
-        >
-          Confirmar PIN
+        <div class="pin-err" id="codeErr"></div>
+        <button class="btn-primary" onclick="submitFamilyCode()">
+          Buscar familia →
         </button>
-        <button class="btn-outline" onclick="obBack()">← Atrás</button>
-      </div>
-      <div class="ob-step" id="obStep3">
+        <div class="divider">o escaneá el QR</div>
         <div
           style="
-            font-size: 16px;
+            background: #f7f3ee;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+          "
+        >
+          <div
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: #9e8a7a;
+              margin-bottom: 8px;
+            "
+          >
+            Función de QR próximamente
+          </div>
+          <div style="font-size: 11px; color: #c4b0a0; font-weight: 600">
+            Por ahora usá el código de 6 números
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: center">
+          <button
+            style="
+              background: none;
+              border: none;
+              color: #7c5cbf;
+              font-size: 13px;
+              font-weight: 800;
+              cursor: pointer;
+              font-family: &quot;Nunito&quot;, sans-serif;
+            "
+            onclick="showScreen('screenAuth')"
+          >
+            Soy papá/mamá →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SCREEN: KID SELECT (elegir hijo)
+══════════════════════════════════════ -->
+    <div class="screen" id="screenKidSelect">
+      <div style="padding: 60px 24px 40px">
+        <div
+          style="
+            font-size: 22px;
             font-weight: 900;
             color: #2d1a0e;
             margin-bottom: 4px;
           "
+          id="kidSelectTitle"
         >
-          Confirmá tu PIN
+          ¿Quién sos?
         </div>
         <div
           style="
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             color: #9e8a7a;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+          "
+          id="kidSelectSub"
+        >
+          Familia encontrada ✅
+        </div>
+        <div class="kid-list" id="kidSelectList"></div>
+        <div style="margin-top: 20px; text-align: center">
+          <button
+            style="
+              background: none;
+              border: none;
+              color: #9e8a7a;
+              font-size: 13px;
+              font-weight: 700;
+              cursor: pointer;
+              font-family: &quot;Nunito&quot;, sans-serif;
+            "
+            onclick="showScreen('screenKidEntry')"
+          >
+            ← Cambiar código
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     SCREEN: PIN ENTRY
+══════════════════════════════════════ -->
+    <div class="screen" id="screenPin">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          padding: 40px 24px;
+        "
+      >
+        <div style="font-size: 52px; margin-bottom: 12px" id="pinScreenIcon">
+          👦
+        </div>
+        <div
+          style="
+            font-size: 22px;
+            font-weight: 900;
+            color: #2d1a0e;
+            margin-bottom: 4px;
+          "
+          id="pinScreenName"
+        >
+          Hola!
+        </div>
+        <div
+          style="
+            font-size: 14px;
+            font-weight: 600;
+            color: #9e8a7a;
+            margin-bottom: 24px;
           "
         >
-          Ingresalo de nuevo
+          Ingresá tu PIN
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <div class="pin-display" id="obPin2Display"></div>
-          <div class="pin-pad">
-            <button class="pin-key" onclick="obPin2Key('1')">1</button
-            ><button class="pin-key" onclick="obPin2Key('2')">2</button
-            ><button class="pin-key" onclick="obPin2Key('3')">3</button>
-            <button class="pin-key" onclick="obPin2Key('4')">4</button
-            ><button class="pin-key" onclick="obPin2Key('5')">5</button
-            ><button class="pin-key" onclick="obPin2Key('6')">6</button>
-            <button class="pin-key" onclick="obPin2Key('7')">7</button
-            ><button class="pin-key" onclick="obPin2Key('8')">8</button
-            ><button class="pin-key" onclick="obPin2Key('9')">9</button>
+        <div class="pin-wrap" style="width: 100%">
+          <div class="pin-display" id="pinEntryDisp"></div>
+          <div class="pin-pad" style="margin-top: 16px">
+            <button class="pin-key" onclick="pinInput('entry', 0, '1')">
+              1</button
+            ><button class="pin-key" onclick="pinInput('entry', 0, '2')">
+              2</button
+            ><button class="pin-key" onclick="pinInput('entry', 0, '3')">
+              3
+            </button>
+            <button class="pin-key" onclick="pinInput('entry', 0, '4')">
+              4</button
+            ><button class="pin-key" onclick="pinInput('entry', 0, '5')">
+              5</button
+            ><button class="pin-key" onclick="pinInput('entry', 0, '6')">
+              6
+            </button>
+            <button class="pin-key" onclick="pinInput('entry', 0, '7')">
+              7</button
+            ><button class="pin-key" onclick="pinInput('entry', 0, '8')">
+              8</button
+            ><button class="pin-key" onclick="pinInput('entry', 0, '9')">
+              9
+            </button>
             <div></div>
-            <button class="pin-key" onclick="obPin2Key('0')">0</button
-            ><button class="pin-key del" onclick="obPin2Del()">⌫</button>
+            <button class="pin-key" onclick="pinInput('entry', 0, '0')">
+              0</button
+            ><button class="pin-key del" onclick="pinDel('entry', 0)">⌫</button>
           </div>
         </div>
-        <div class="pin-err" id="obPin2Err"></div>
-        <button class="btn-outline" onclick="obBack2()">← Atrás</button>
+        <div class="pin-err" id="pinEntryErr"></div>
+        <button
+          style="
+            margin-top: 16px;
+            background: none;
+            border: none;
+            color: #9e8a7a;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: &quot;Nunito&quot;, sans-serif;
+          "
+          id="pinBackBtn"
+          onclick="pinBack()"
+        >
+          ← Volver
+        </button>
       </div>
     </div>
 
-    <!-- PROFILE SELECTOR -->
-    <div class="profile-screen" id="profileScreen">
-      <img class="profile-splash" src="icons/splash.png" alt="Tasky" />
-      <div class="profile-bottom">
-        <div class="profile-title">¿Quién sos?</div>
-        <div class="profiles-grid" id="profilesGrid"></div>
-      </div>
-    </div>
-
-    <!-- PIN SCREEN -->
-    <div class="pin-screen" id="pinScreen">
-      <div style="font-size: 52px; margin-bottom: 12px" id="pinScreenIcon">
-        👦
-      </div>
-      <div
-        style="
-          font-size: 22px;
-          font-weight: 900;
-          color: #2d1a0e;
-          margin-bottom: 4px;
-        "
-        id="pinScreenName"
-      >
-        Hola!
-      </div>
-      <div
-        style="
-          font-size: 14px;
-          font-weight: 600;
-          color: #9e8a7a;
-          margin-bottom: 24px;
-        "
-      >
-        Ingresá tu PIN
-      </div>
-      <div class="pin-display" id="pinScreenDisplay"></div>
-      <div style="margin-top: 16px" class="pin-pad">
-        <button class="pin-key" onclick="pinKey('1')">1</button
-        ><button class="pin-key" onclick="pinKey('2')">2</button
-        ><button class="pin-key" onclick="pinKey('3')">3</button>
-        <button class="pin-key" onclick="pinKey('4')">4</button
-        ><button class="pin-key" onclick="pinKey('5')">5</button
-        ><button class="pin-key" onclick="pinKey('6')">6</button>
-        <button class="pin-key" onclick="pinKey('7')">7</button
-        ><button class="pin-key" onclick="pinKey('8')">8</button
-        ><button class="pin-key" onclick="pinKey('9')">9</button>
-        <div></div>
-        <button class="pin-key" onclick="pinKey('0')">0</button
-        ><button class="pin-key del" onclick="pinDel()">⌫</button>
-      </div>
-      <div class="pin-err" id="pinScreenErr"></div>
-      <button
-        style="
-          margin-top: 16px;
-          background: none;
-          border: none;
-          color: #9e8a7a;
-          font-size: 13px;
-          font-weight: 700;
-          cursor: pointer;
-          font-family: &quot;Nunito&quot;, sans-serif;
-        "
-        onclick="showProfileScreen()"
-      >
-        ← Volver
-      </button>
-    </div>
-
-    <!-- SET KID PIN -->
-    <div class="overlay" id="setKidPinOverlay">
-      <div class="sheet">
+    <!-- ══════════════════════════════════════
+     SET KID PIN MODAL
+══════════════════════════════════════ -->
+    <div class="modal-overlay" id="setKidPinModal">
+      <div class="modal-sheet">
         <div class="sheet-handle"></div>
-        <div class="sheet-title" id="setKidPinTitle">PIN de Clara</div>
-        <div class="sheet-sub">Asigná un PIN de 4 dígitos</div>
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <div class="pin-display" id="kidPinDisplay"></div>
-          <div class="pin-pad">
-            <button class="pin-key" onclick="kidPinKey('1')">1</button
-            ><button class="pin-key" onclick="kidPinKey('2')">2</button
-            ><button class="pin-key" onclick="kidPinKey('3')">3</button>
-            <button class="pin-key" onclick="kidPinKey('4')">4</button
-            ><button class="pin-key" onclick="kidPinKey('5')">5</button
-            ><button class="pin-key" onclick="kidPinKey('6')">6</button>
-            <button class="pin-key" onclick="kidPinKey('7')">7</button
-            ><button class="pin-key" onclick="kidPinKey('8')">8</button
-            ><button class="pin-key" onclick="kidPinKey('9')">9</button>
+        <div class="modal-title" id="setKidPinTitle">PIN de Clara</div>
+        <div class="modal-sub">PIN de 4 dígitos para que pueda ingresar</div>
+        <div class="pin-wrap">
+          <div class="pin-display" id="kidPinDisp"></div>
+          <div class="pin-pad" style="margin-top: 12px">
+            <button class="pin-key" onclick="pinInput('kid', 0, '1')">1</button
+            ><button class="pin-key" onclick="pinInput('kid', 0, '2')">2</button
+            ><button class="pin-key" onclick="pinInput('kid', 0, '3')">
+              3
+            </button>
+            <button class="pin-key" onclick="pinInput('kid', 0, '4')">4</button
+            ><button class="pin-key" onclick="pinInput('kid', 0, '5')">5</button
+            ><button class="pin-key" onclick="pinInput('kid', 0, '6')">
+              6
+            </button>
+            <button class="pin-key" onclick="pinInput('kid', 0, '7')">7</button
+            ><button class="pin-key" onclick="pinInput('kid', 0, '8')">8</button
+            ><button class="pin-key" onclick="pinInput('kid', 0, '9')">
+              9
+            </button>
             <div></div>
-            <button class="pin-key" onclick="kidPinKey('0')">0</button
-            ><button class="pin-key del" onclick="kidPinDel()">⌫</button>
+            <button class="pin-key" onclick="pinInput('kid', 0, '0')">0</button
+            ><button class="pin-key del" onclick="pinDel('kid', 0)">⌫</button>
           </div>
         </div>
         <div class="pin-err" id="kidPinErr"></div>
-        <button
-          class="btn-outline"
-          onclick="
-            document.getElementById('setKidPinOverlay').classList.remove('show')
-          "
-        >
+        <button class="btn-outline" onclick="closeModal('setKidPinModal')">
           Cancelar
         </button>
       </div>
     </div>
 
-    <!-- CHOOSE REWARD -->
-    <div class="choose-overlay" id="chooseOverlay">
-      <div class="modal-inner">
+    <!-- CHOOSE REWARD MODAL -->
+    <div class="modal-overlay" id="chooseModal">
+      <div class="modal-sheet">
         <div class="sheet-handle"></div>
-        <div
-          style="
-            font-size: 20px;
-            font-weight: 900;
-            color: #2d1a0e;
-            text-align: center;
-            margin-bottom: 4px;
-          "
-        >
-          ¡Sobre desbloqueado! 🎁
-        </div>
-        <div
-          style="
-            font-size: 13px;
-            font-weight: 700;
-            color: #9e8a7a;
-            text-align: center;
-            margin-bottom: 18px;
-          "
-        >
-          Elegí tu recompensa
-        </div>
+        <div class="modal-title">¡Sobre desbloqueado! 🎁</div>
+        <div class="modal-sub">Elegí tu recompensa</div>
         <div id="chooseOptions"></div>
       </div>
     </div>
 
-    <!-- TASK COMPLETE -->
-    <div class="photo-modal" id="photoModal">
-      <div class="modal-inner">
-        <h3
-          style="
-            font-size: 17px;
-            font-weight: 900;
-            color: #2d1a0e;
-            margin-bottom: 12px;
-          "
-        >
-          ✅ Marcar como completada
-        </h3>
+    <!-- TASK COMPLETE MODAL -->
+    <div class="modal-overlay" id="taskModal">
+      <div class="modal-sheet">
+        <div class="sheet-handle"></div>
+        <div class="modal-title">✅ Tarea completada</div>
         <div
           style="
             font-size: 12px;
@@ -1512,40 +1687,48 @@
         </div>
         <input
           class="msg-input"
-          id="photoMsg"
-          placeholder="Mensaje para papá/mamá... (opcional)"
+          id="taskMsg"
+          placeholder="Mensaje opcional..."
           maxlength="80"
         />
         <button class="btn-primary" onclick="submitTask()">
-          Completar tarea ✅
+          Marcar como hecha ✅
         </button>
-        <button class="btn-outline" onclick="closePhotoModal()">
+        <button class="btn-outline" onclick="closeModal('taskModal')">
           Cancelar
         </button>
       </div>
     </div>
 
-    <!-- SCREEN: KIDS -->
-    <div class="screen active" id="screenKid">
+    <!-- ══════════════════════════════════════
+     APP SCREENS (post login)
+══════════════════════════════════════ -->
+
+    <!-- TASKS -->
+    <div class="app-screen" id="appTasks">
       <div class="header">
-        <div class="hola" id="kidHola">👋 ¡Hola,</div>
-        <div class="kid-name" id="kidGreeting">...</div>
-        <div style="position: absolute; top: 46px; right: 20px">
-          <div class="avatar-circle" id="kidAvatarCircle">👦</div>
-          <div class="avatar-star">⭐</div>
-        </div>
+        <div class="hola" id="tasksHola">👋 ¡Hola,</div>
+        <div class="page-title" id="tasksTitle">...</div>
+        <div class="avatar-circle" id="tasksAvatar">👦</div>
       </div>
-      <!-- Tabs = selector de hijo + botón de papá -->
-      <div class="kid-tabs" id="kidTabsWrap"></div>
+      <!-- Kid tabs (solo en modo padre) -->
+      <div
+        id="kidTabsWrap"
+        style="
+          display: flex;
+          gap: 10px;
+          padding: 14px 16px 0;
+          overflow-x: auto;
+          scrollbar-width: none;
+        "
+      ></div>
       <div class="banner-section">
         <div class="banner-sparkle"></div>
         <div class="banner-promo">🔥 PROMOCIÓN SEMANAL</div>
         <div class="banner-title">
           Canjéa tu recompensa<br /><span>antes que se agote</span>
         </div>
-        <div class="banner-sub">
-          ⭐ Acumulá puntos, elegí tu recompensa y seguí logrando más.
-        </div>
+        <div class="banner-sub">⭐ Acumulá puntos y elegí tu recompensa.</div>
         <div class="reward-cards-row" id="rewardCardsRow"></div>
       </div>
       <div class="level-card">
@@ -1555,7 +1738,7 @@
               style="font-size: 14px; font-weight: 900; color: #2d1a0e"
               id="levelName"
             >
-              🌱 Aprendiz del hogar
+              🌱 Aprendiz
             </div>
             <div
               style="
@@ -1593,33 +1776,94 @@
       </div>
       <div id="streakWrap"></div>
       <div id="activeRewardWrap"></div>
-      <div class="tasks-section-lbl">📋 Tareas de esta semana</div>
-      <div id="kidTaskList"></div>
-      <button
-        class="sobre-btn"
-        id="openSobreBtn"
-        onclick="tryOpenSobre()"
-        disabled
-      >
+      <div class="section-lbl">📋 Tareas de esta semana</div>
+      <div id="taskList"></div>
+      <button class="sobre-btn" id="sobreBtn" onclick="tryOpenSobre()" disabled>
         Abrir sobre 🎁
       </button>
     </div>
 
-    <!-- SCREEN: DAD -->
-    <div class="screen" id="screenDad">
+    <!-- PARENT PANEL -->
+    <div class="app-screen" id="appDad">
       <div class="header">
-        <div class="kid-name" id="panelTitle">Mi panel</div>
+        <div class="hola" id="dadHola">Panel de</div>
+        <div class="page-title" id="dadTitle">Papá</div>
+      </div>
+
+      <!-- Resumen de hijos -->
+      <div class="dad-card">
+        <div class="dad-card-title">👨‍👧‍👦 Mis hijos</div>
+        <div id="dadKidsSummary"></div>
         <div
           style="
-            color: #9e8a7a;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 2px;
+            margin-top: 12px;
+            border-top: 1px solid #f0ece8;
+            padding-top: 12px;
           "
         >
-          Gestión completa
+          <div
+            style="
+              font-size: 12px;
+              font-weight: 800;
+              color: #9e8a7a;
+              margin-bottom: 8px;
+            "
+          >
+            AGREGAR HIJO/A
+          </div>
+          <input
+            class="dad-input"
+            id="newKidName"
+            placeholder="Nombre..."
+            maxlength="20"
+          />
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              margin: 4px 0 8px;
+            "
+          >
+            <input
+              class="dad-input"
+              id="newKidAge"
+              type="number"
+              placeholder="Edad"
+              min="1"
+              max="18"
+            />
+            <select class="dad-select" id="newKidGender">
+              <option value="girl">Niña</option>
+              <option value="boy">Niño</option>
+            </select>
+          </div>
+          <button class="dad-add-btn" onclick="addKid()">
+            + Agregar hijo/a
+          </button>
         </div>
       </div>
+
+      <!-- Código de familia -->
+      <div class="dad-card">
+        <div class="dad-card-title">🔑 Código de familia</div>
+        <div class="family-code-box">
+          <div class="family-code-lbl">Tu código único</div>
+          <div class="family-code-val" id="familyCodeDisplay">------</div>
+        </div>
+        <div
+          style="
+            font-size: 12px;
+            font-weight: 600;
+            color: #9e8a7a;
+            text-align: center;
+          "
+        >
+          Compartí este código con tus hijos para que puedan ingresar a Tasky
+        </div>
+      </div>
+
+      <!-- Tareas -->
       <div class="dad-card">
         <div class="dad-card-title">📝 Agregar tarea</div>
         <input
@@ -1638,7 +1882,7 @@
             margin: 8px 0 4px;
           "
         >
-          Elegí un ícono
+          Ícono
         </div>
         <div class="emoji-picker-wrap">
           <div class="ep-grid" id="taskEmojiPicker"></div>
@@ -1664,9 +1908,11 @@
         <button class="dad-add-btn" onclick="addTask()">+ Agregar tarea</button>
       </div>
       <div class="dad-card">
-        <div class="dad-card-title">📋 Tareas asignadas</div>
-        <div id="dadAllTasks"></div>
+        <div class="dad-card-title">📋 Tareas activas</div>
+        <div id="dadTasksList"></div>
       </div>
+
+      <!-- Recompensas -->
       <div class="dad-card">
         <div class="dad-card-title">🎁 Agregar recompensa</div>
         <input
@@ -1724,76 +1970,25 @@
         </button>
       </div>
       <div class="dad-card">
-        <div class="dad-card-title">🏆 Recompensas</div>
+        <div class="dad-card-title">🏆 Recompensas activas</div>
         <div id="dadRewardsList"></div>
       </div>
-      <div class="dad-card">
-        <div class="dad-card-title">👨‍👧‍👦 Mis hijos</div>
-        <div id="dadKidsList"></div>
-        <div
-          style="
-            margin-top: 12px;
-            border-top: 1px solid #f0ece8;
-            padding-top: 12px;
-          "
-        >
-          <div
-            style="
-              font-size: 12px;
-              font-weight: 800;
-              color: #9e8a7a;
-              margin-bottom: 8px;
-            "
-          >
-            AGREGAR HIJO/A
-          </div>
-          <input
-            class="dad-input"
-            id="newKidName"
-            placeholder="Nombre..."
-            maxlength="20"
-          />
-          <div
-            style="
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 8px;
-              margin: 4px 0 8px;
-            "
-          >
-            <input
-              class="dad-input"
-              id="newKidAge"
-              type="number"
-              placeholder="Edad"
-              min="1"
-              max="18"
-            />
-            <select class="dad-select" id="newKidGender">
-              <option value="girl">Niña</option>
-              <option value="boy">Niño</option>
-            </select>
-          </div>
-          <button class="dad-add-btn" onclick="addKid()">
-            + Agregar hijo/a
-          </button>
-        </div>
-      </div>
+
+      <!-- Evidencias -->
       <div class="dad-card">
         <div class="dad-card-title">📸 Evidencias</div>
-        <div id="evidenceList"></div>
+        <div id="dadEvidenceList"></div>
       </div>
+
       <div style="padding: 0 16px 16px">
-        <button class="logout-btn" onclick="signOut()">
-          🚪 Cerrar sesión de Google
-        </button>
+        <button class="logout-btn" onclick="signOut()">🚪 Cerrar sesión</button>
       </div>
     </div>
 
-    <!-- SCREEN: HISTORY -->
-    <div class="screen" id="screenHistory">
+    <!-- HISTORY -->
+    <div class="app-screen" id="appHistory">
       <div class="header">
-        <div class="kid-name">Historial</div>
+        <div class="page-title">Historial</div>
         <div
           style="
             color: #9e8a7a;
@@ -1808,27 +2003,31 @@
       <div id="historyContent"></div>
     </div>
 
+    <!-- NAV -->
     <nav class="nav" id="mainNav">
-      <button class="nav-btn active" onclick="navToKid(this)">
+      <button class="nav-btn active" onclick="navTo('appTasks', this)">
         <div class="nav-icon-wrap"><span class="nav-icon">✅</span></div>
         Tareas
       </button>
-      <button class="nav-btn" onclick="navToDad(this)">
+      <button class="nav-btn" id="navDadBtn" onclick="navToDad(this)">
         <div class="nav-icon-wrap">
-          <span class="nav-icon" id="navParentIcon">👨</span>
+          <span class="nav-icon" id="navDadIcon">👨</span>
         </div>
-        <span id="navParentLabel">Papá</span>
+        <span id="navDadLabel">Papá</span>
       </button>
-      <button class="nav-btn" onclick="navToHistory(this)">
+      <button class="nav-btn" onclick="navTo('appHistory', this)">
         <div class="nav-icon-wrap"><span class="nav-icon">📋</span></div>
         Historial
       </button>
     </nav>
 
     <script>
+      // ══════════════════════════════════════
+      // SUPABASE
+      // ══════════════════════════════════════
       const SUPA_URL = "https://uosxwtjonxileaqcirwb.supabase.co";
       const SUPA_KEY = "sb_publishable_gKWzhzpTHcfG5yFJPo5AuA_JlfU2S6N";
-      const authStorage = {
+      const authSt = {
         getItem: (k) => {
           try {
             return localStorage.getItem(k);
@@ -1865,11 +2064,14 @@
           detectSessionInUrl: true,
           persistSession: true,
           storageKey: "tasky-auth",
-          storage: authStorage,
+          storage: authSt,
           autoRefreshToken: true,
         },
       });
 
+      // ══════════════════════════════════════
+      // CONSTANTS
+      // ══════════════════════════════════════
       const RARITIES = {
         common: { label: "Común", color: "#9e7b62" },
         rare: { label: "Raro", color: "#3a70b0" },
@@ -1934,34 +2136,36 @@
         "🌿",
         "🍱",
         "🥗",
-        "🧇",
-        "🥤",
         "🪣",
         "🏠",
       ];
 
+      // ══════════════════════════════════════
+      // STATE
+      // ══════════════════════════════════════
       let S = {
         user: null,
         parent: null,
+        mode: null, // 'parent' | 'kid'
         currentKid: null,
+        foundFamily: null,
         kids: [],
         tasks: [],
         rewards: [],
         completions: [],
         evidence: [],
         selectedEmojis: [],
-        currentPhotoTask: null,
-        currentMode: null,
+        currentTaskId: null,
+        kidPinTarget: null,
       };
-      let obPin = "",
-        obPin2 = "",
-        obParentGender = "";
-      let pinBuffer = "",
-        pinTarget = null;
-      let kidPinBuffer = "",
-        kidPinTarget = null;
-      let selectedTaskEmoji = TASK_EMOJIS[0];
+      // PIN buffers
+      const pins = { ob1: "", ob2: "", entry: "", kid: "" };
+      let obGender = "",
+        selectedTaskEmoji = TASK_EMOJIS[0];
 
+      // ══════════════════════════════════════
+      // HELPERS
+      // ══════════════════════════════════════
       function kidEmoji(g) {
         return g === "girl" ? "👧" : g === "boy" ? "👦" : "🧒";
       }
@@ -1986,13 +2190,17 @@
         const t = document.getElementById("toast");
         t.textContent = msg;
         t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 2400);
+        setTimeout(() => t.classList.remove("show"), 2500);
       }
       function setLoading(v) {
         document
           .getElementById("loadingOverlay")
           .classList.toggle("hidden", !v);
       }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("show");
+      }
+
       async function hashPin(pin) {
         const buf = await crypto.subtle.digest(
           "SHA-256",
@@ -2013,10 +2221,10 @@
           if (+pin[i] !== +pin[i - 1] + 1) a = false;
           if (+pin[i] !== +pin[i - 1] - 1) d = false;
         }
-        if (a || d) return true;
-        if (new Set(pin).size === 1) return true;
+        if (a || d || new Set(pin).size === 1) return true;
         return false;
       }
+
       function renderPinDisplay(id, pin, len = 4) {
         const n = Math.max(len, pin.length);
         document.getElementById(id).innerHTML = Array.from(
@@ -2025,17 +2233,41 @@
             `<div class="pin-bubble${i < pin.length ? " filled" : ""}">${i < pin.length ? "●" : ""}</div>`,
         ).join("");
       }
-      function hideAll() {
+
+      // ══════════════════════════════════════
+      // SCREEN ROUTING
+      // ══════════════════════════════════════
+      function showScreen(id) {
         document
           .querySelectorAll(".screen")
           .forEach((s) => s.classList.remove("active"));
-        ["profileScreen", "authScreen", "onboardScreen", "pinScreen"].forEach(
-          (id) => document.getElementById(id).classList.remove("show"),
-        );
-        document.getElementById("mainNav").style.display = "none";
+        document
+          .querySelectorAll(".app-screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("mainNav").classList.remove("visible");
+        const el = document.getElementById(id);
+        if (el) el.classList.add("active");
+      }
+      function showApp(appId, navBtn) {
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll(".app-screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(appId).classList.add("active");
+        document.getElementById("mainNav").classList.add("visible");
+        if (navBtn) {
+          document
+            .querySelectorAll(".nav-btn")
+            .forEach((b) => b.classList.remove("active"));
+          navBtn.classList.add("active");
+        }
       }
 
-      // ─── AUTH ─────────────────────────────────────
+      // ══════════════════════════════════════
+      // AUTH
+      // ══════════════════════════════════════
       async function loginWithGoogle() {
         await sb.auth.signInWithOAuth({
           provider: "google",
@@ -2050,182 +2282,11 @@
         location.reload();
       }
 
-      // ─── PROFILE SCREEN ───────────────────────────
-      function showProfileScreen() {
-        hideAll();
-        document.getElementById("profileScreen").classList.add("show");
-        renderProfileGrid();
-      }
-
-      function renderProfileGrid() {
-        const grid = document.getElementById("profilesGrid");
-        let html = "";
-        if (S.parent) {
-          html += `<div class="profile-card parent-card" onclick="requestPin('parent')">
-      <span class="profile-card-icon">${parentEmoji(S.parent.gender)}</span>
-      <div class="profile-card-name">${S.parent.name}</div>
-      <div class="profile-card-role">${S.parent.gender === "mother" ? "Mamá" : "Papá"}</div>
-    </div>`;
-        } else {
-          html += `<div class="profile-card parent-card" onclick="showAuthScreen()">
-      <span class="profile-card-icon">👤</span>
-      <div class="profile-card-name">Registrarse</div>
-      <div class="profile-card-role">Padre / Madre</div>
-    </div>`;
-        }
-        S.kids.forEach((k) => {
-          html += `<div class="profile-card" onclick="requestPin('${k.id}')">
-      <span class="profile-card-icon">${kidEmoji(k.gender)}</span>
-      <div class="profile-card-name">${k.name}</div>
-      <div class="profile-card-role">${k.age} años</div>
-    </div>`;
-        });
-        grid.innerHTML = html;
-      }
-
-      function showAuthScreen() {
-        hideAll();
-        document.getElementById("authScreen").classList.add("show");
-      }
-
-      // ─── PIN SCREEN ───────────────────────────────
-      function requestPin(id) {
-        if (id === "parent") {
-          if (!S.parent) return;
-          pinTarget = { type: "parent", data: S.parent };
-        } else {
-          const kid = S.kids.find((k) => k.id === id);
-          if (!kid) return;
-          if (!kid.pin_hash) {
-            showToast("Este hijo no tiene PIN asignado aún");
-            return;
-          }
-          pinTarget = { type: "kid", data: kid };
-        }
-        pinBuffer = "";
-        document.getElementById("pinScreenIcon").textContent =
-          pinTarget.type === "parent"
-            ? parentEmoji(pinTarget.data.gender)
-            : kidEmoji(pinTarget.data.gender);
-        document.getElementById("pinScreenName").textContent =
-          "Hola, " + pinTarget.data.name + "!";
-        document.getElementById("pinScreenErr").textContent = "";
-        renderPinDisplay("pinScreenDisplay", pinBuffer);
-        hideAll();
-        document.getElementById("pinScreen").classList.add("show");
-      }
-
-      async function pinKey(d) {
-        if (pinBuffer.length >= 6) return;
-        pinBuffer += d;
-        renderPinDisplay("pinScreenDisplay", pinBuffer);
-        document.getElementById("pinScreenErr").textContent = "";
-        if (pinBuffer.length >= 4) {
-          setTimeout(async () => {
-            const ok = await verifyPin(pinBuffer, pinTarget.data.pin_hash);
-            if (ok) {
-              document.getElementById("pinScreen").classList.remove("show");
-              pinTarget.type === "parent"
-                ? enterParent()
-                : enterKid(pinTarget.data.id);
-            } else if (pinBuffer.length === 6) {
-              pinError();
-            }
-          }, 200);
-        }
-      }
-      function pinDel() {
-        if (pinBuffer.length > 0) {
-          pinBuffer = pinBuffer.slice(0, -1);
-          renderPinDisplay("pinScreenDisplay", pinBuffer);
-        }
-      }
-      function pinError() {
-        document
-          .querySelectorAll("#pinScreenDisplay .pin-bubble")
-          .forEach((b) => b.classList.add("error"));
-        document.getElementById("pinScreenErr").textContent = "PIN incorrecto";
-        setTimeout(() => {
-          pinBuffer = "";
-          renderPinDisplay("pinScreenDisplay", pinBuffer);
-          document.getElementById("pinScreenErr").textContent = "";
-          document
-            .querySelectorAll("#pinScreenDisplay .pin-bubble")
-            .forEach((b) => b.classList.remove("error"));
-        }, 800);
-      }
-
-      function enterParent() {
-        S.currentMode = "parent";
-        document.getElementById("navParentIcon").textContent = parentEmoji(
-          S.parent.gender,
-        );
-        document.getElementById("navParentLabel").textContent =
-          S.parent.gender === "mother" ? "Mamá" : "Papá";
-        document.getElementById("panelTitle").textContent =
-          S.parent.gender === "mother" ? "Mi panel (mamá)" : "Mi panel (papá)";
-        document
-          .querySelectorAll(".screen")
-          .forEach((s) => s.classList.remove("active"));
-        document.getElementById("screenDad").classList.add("active");
-        document.getElementById("mainNav").style.display = "flex";
-        document
-          .querySelectorAll(".nav-btn")
-          .forEach((b, i) => b.classList.toggle("active", i === 1));
-        renderDadScreen();
-        initTaskEmojiPicker();
-      }
-
-      function enterKid(kidId) {
-        S.currentMode = "kid";
-        S.currentKid = kidId;
-        document
-          .querySelectorAll(".screen")
-          .forEach((s) => s.classList.remove("active"));
-        document.getElementById("screenKid").classList.add("active");
-        document.getElementById("mainNav").style.display = "flex";
-        document
-          .querySelectorAll(".nav-btn")
-          .forEach((b, i) => b.classList.toggle("active", i === 0));
-        renderKidScreen();
-        renderBanner();
-      }
-
-      // ─── NAV — pide PIN al cambiar ────────────────
-      function navToKid(btn) {
-        if (S.currentMode === "kid" && S.currentKid) {
-          // ya estoy en modo kid, solo cambio tab
-          setActiveNav(btn);
-          document
-            .querySelectorAll(".screen")
-            .forEach((s) => s.classList.remove("active"));
-          document.getElementById("screenKid").classList.add("active");
-        } else {
-          showProfileScreen(); // vuelve al selector
-        }
-      }
-      function navToDad(btn) {
-        // Siempre pide PIN del padre
-        requestPin("parent");
-      }
-      function navToHistory(btn) {
-        setActiveNav(btn);
-        document
-          .querySelectorAll(".screen")
-          .forEach((s) => s.classList.remove("active"));
-        document.getElementById("screenHistory").classList.add("active");
-        renderHistory();
-      }
-      function setActiveNav(btn) {
-        document
-          .querySelectorAll(".nav-btn")
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-      }
-
-      // ─── ONBOARDING ───────────────────────────────
-      function selectParentGender(g) {
-        obParentGender = g;
+      // ══════════════════════════════════════
+      // ONBOARDING
+      // ══════════════════════════════════════
+      function selectGender(g) {
+        obGender = g;
         document
           .getElementById("gcFather")
           .classList.toggle("sel", g === "father");
@@ -2238,90 +2299,59 @@
           showToast("Ingresá tu nombre");
           return;
         }
-        if (!obParentGender) {
+        if (!obGender) {
           showToast("Elegí si sos papá o mamá");
           return;
         }
         document.getElementById("obStep1").classList.remove("active");
         document.getElementById("obStep2").classList.add("active");
-        obPin = "";
-        renderPinDisplay("obPinDisplay", obPin);
+        pins.ob1 = "";
+        renderPinDisplay("obPinDisp", pins.ob1);
       }
-      function obBack() {
-        document.getElementById("obStep2").classList.remove("active");
-        document.getElementById("obStep1").classList.add("active");
-      }
-      function obBack2() {
-        document.getElementById("obStep3").classList.remove("active");
-        document.getElementById("obStep2").classList.add("active");
-      }
-      function obPinKey(d) {
-        if (obPin.length >= 6) return;
-        obPin += d;
-        renderPinDisplay("obPinDisplay", obPin);
-        document.getElementById("obPinErr").textContent = "";
-        const ok = obPin.length >= 4;
-        document.getElementById("obPinConfirmBtn").style.opacity = ok
-          ? "1"
-          : ".4";
-        document.getElementById("obPinConfirmBtn").style.pointerEvents = ok
-          ? "auto"
-          : "none";
-      }
-      function obPinDel() {
-        if (obPin.length > 0) {
-          obPin = obPin.slice(0, -1);
-          renderPinDisplay("obPinDisplay", obPin);
+      function obBack(step) {
+        if (step === 1) {
+          document.getElementById("obStep2").classList.remove("active");
+          document.getElementById("obStep1").classList.add("active");
+        }
+        if (step === 2) {
+          document.getElementById("obStep3").classList.remove("active");
+          document.getElementById("obStep2").classList.add("active");
         }
       }
       function obNext2() {
-        if (obPin.length < 4) {
+        if (pins.ob1.length < 4) {
           showToast("Mínimo 4 dígitos");
           return;
         }
-        if (isWeak(obPin)) {
+        if (isWeak(pins.ob1)) {
           document.getElementById("obPinErr").textContent =
             "PIN muy fácil, elegí uno más seguro";
           return;
         }
         document.getElementById("obStep2").classList.remove("active");
         document.getElementById("obStep3").classList.add("active");
-        obPin2 = "";
-        renderPinDisplay("obPin2Display", obPin2);
+        pins.ob2 = "";
+        renderPinDisplay("obPin2Disp", pins.ob2);
       }
-      function obPin2Key(d) {
-        if (obPin2.length >= obPin.length) return;
-        obPin2 += d;
-        renderPinDisplay("obPin2Display", obPin2);
-        document.getElementById("obPin2Err").textContent = "";
-        if (obPin2.length === obPin.length)
-          setTimeout(() => finishOnboarding(), 200);
-      }
-      function obPin2Del() {
-        if (obPin2.length > 0) {
-          obPin2 = obPin2.slice(0, -1);
-          renderPinDisplay("obPin2Display", obPin2);
-        }
-      }
-      async function finishOnboarding() {
-        if (obPin2 !== obPin) {
+      async function finishOnboard() {
+        if (pins.ob2 !== pins.ob1) {
           document.getElementById("obPin2Err").textContent =
             "Los PINs no coinciden";
-          obPin2 = "";
-          renderPinDisplay("obPin2Display", obPin2);
+          pins.ob2 = "";
+          renderPinDisplay("obPin2Disp", pins.ob2);
           return;
         }
         setLoading(true);
-        const hash = await hashPin(obPin);
+        const hash = await hashPin(pins.ob1);
         const name = document.getElementById("obName").value.trim();
-        const { error } = await sb
-          .from("parents")
-          .insert({
-            id: S.user.id,
-            name,
-            gender: obParentGender,
-            pin_hash: hash,
-          });
+        const fc = String(Math.floor(100000 + Math.random() * 900000));
+        const { error } = await sb.from("parents").insert({
+          id: S.user.id,
+          name,
+          gender: obGender,
+          pin_hash: hash,
+          family_code: fc,
+        });
         if (error) {
           setLoading(false);
           showToast("Error: " + error.message);
@@ -2333,55 +2363,233 @@
           .eq("id", S.user.id)
           .single();
         S.parent = parent;
+        S.mode = "parent";
         await loadAll();
         setLoading(false);
-        showProfileScreen();
+        enterParentMode();
       }
 
-      // ─── KID PIN ASSIGN ───────────────────────────
-      function openSetKidPin(kidId) {
-        kidPinTarget = kidId;
-        kidPinBuffer = "";
-        const kid = S.kids.find((k) => k.id === kidId);
-        document.getElementById("setKidPinTitle").textContent =
-          "PIN de " + (kid?.name || "hijo/a");
-        document
-          .getElementById("setKidPinOverlay")
-          .querySelector(".sheet-sub").textContent = kid?.pin_hash
-          ? "Asigná un nuevo PIN de 4 dígitos"
-          : "Asigná el PIN para que pueda ingresar";
-        document.getElementById("kidPinErr").textContent = "";
-        renderPinDisplay("kidPinDisplay", kidPinBuffer);
-        document.getElementById("setKidPinOverlay").classList.add("show");
+      // ══════════════════════════════════════
+      // PIN INPUT SYSTEM
+      // ══════════════════════════════════════
+      function pinInput(ctx, sub, digit) {
+        const key =
+          ctx === "ob"
+            ? sub === 1
+              ? "ob1"
+              : "ob2"
+            : ctx === "entry"
+              ? "entry"
+              : "kid";
+        const dispId =
+          ctx === "ob"
+            ? sub === 1
+              ? "obPinDisp"
+              : "obPin2Disp"
+            : ctx === "entry"
+              ? "pinEntryDisp"
+              : "kidPinDisp";
+        const maxLen = ctx === "kid" ? 4 : 6;
+        if (pins[key].length >= maxLen) return;
+        pins[key] += digit;
+        renderPinDisplay(dispId, pins[key]);
+        // Enable confirm button for ob1
+        if (ctx === "ob" && sub === 1) {
+          const ok = pins.ob1.length >= 4;
+          document.getElementById("obPinBtn").style.opacity = ok ? "1" : ".4";
+          document.getElementById("obPinBtn").style.pointerEvents = ok
+            ? "auto"
+            : "none";
+        }
+        // Auto confirm
+        if (ctx === "ob" && sub === 2 && pins.ob2.length === pins.ob1.length)
+          setTimeout(finishOnboard, 200);
+        if (ctx === "entry" && pins.entry.length >= 4)
+          setTimeout(checkEntryPin, 200);
+        if (ctx === "kid" && pins.kid.length === 4) setTimeout(saveKidPin, 200);
       }
-      function kidPinKey(d) {
-        if (kidPinBuffer.length >= 4) return;
-        kidPinBuffer += d;
-        renderPinDisplay("kidPinDisplay", kidPinBuffer);
-        if (kidPinBuffer.length === 4) setTimeout(() => saveKidPin(), 200);
-      }
-      function kidPinDel() {
-        if (kidPinBuffer.length > 0) {
-          kidPinBuffer = kidPinBuffer.slice(0, -1);
-          renderPinDisplay("kidPinDisplay", kidPinBuffer);
+      function pinDel(ctx, sub) {
+        const key =
+          ctx === "ob"
+            ? sub === 1
+              ? "ob1"
+              : "ob2"
+            : ctx === "entry"
+              ? "entry"
+              : "kid";
+        const dispId =
+          ctx === "ob"
+            ? sub === 1
+              ? "obPinDisp"
+              : "obPin2Disp"
+            : ctx === "entry"
+              ? "pinEntryDisp"
+              : "kidPinDisp";
+        if (pins[key].length > 0) {
+          pins[key] = pins[key].slice(0, -1);
+          renderPinDisplay(dispId, pins[key]);
         }
       }
-      async function saveKidPin() {
-        if (isWeak(kidPinBuffer)) {
-          document.getElementById("kidPinErr").textContent = "PIN muy fácil";
-          kidPinBuffer = "";
-          renderPinDisplay("kidPinDisplay", kidPinBuffer);
+
+      // ══════════════════════════════════════
+      // KID ENTRY FLOW
+      // ══════════════════════════════════════
+      function codeDigit(input, idx) {
+        input.value = input.value.slice(-1);
+        const digits = document.querySelectorAll(".code-digit");
+        if (input.value && idx < 5) digits[idx + 1].focus();
+        if (idx === 5 && input.value) {
+          const code = Array.from(digits)
+            .map((d) => d.value)
+            .join("");
+          if (code.length === 6) submitFamilyCode(code);
+        }
+      }
+      async function submitFamilyCode(code) {
+        const digits = document.querySelectorAll(".code-digit");
+        const fc =
+          code ||
+          Array.from(digits)
+            .map((d) => d.value)
+            .join("");
+        if (fc.length !== 6) {
+          document.getElementById("codeErr").textContent =
+            "Ingresá los 6 dígitos";
           return;
         }
-        const hash = await hashPin(kidPinBuffer);
-        await sb.from("kids").update({ pin_hash: hash }).eq("id", kidPinTarget);
-        document.getElementById("setKidPinOverlay").classList.remove("show");
-        showToast("PIN guardado ✅");
-        await loadAll();
-        renderDadScreen();
+        setLoading(true);
+        const { data: family } = await sb
+          .from("parents")
+          .select("id,name,gender,family_code")
+          .eq("family_code", fc)
+          .single();
+        if (!family) {
+          setLoading(false);
+          document.getElementById("codeErr").textContent =
+            "Código no encontrado";
+          return;
+        }
+        S.foundFamily = family;
+        const { data: kids } = await sb
+          .from("kids")
+          .select("*")
+          .eq("parent_id", family.id);
+        S.kids = kids || [];
+        setLoading(false);
+        // Show kid selector
+        document.getElementById("kidSelectTitle").textContent =
+          "¡Hola! Elegí tu perfil";
+        document.getElementById("kidSelectSub").textContent =
+          "Familia de " + family.name + " ✅";
+        const list = document.getElementById("kidSelectList");
+        list.innerHTML = S.kids
+          .map(
+            (k) => `
+    <div class="kid-list-item" onclick="selectKidProfile('${k.id}')">
+      <div class="kid-list-icon">${kidEmoji(k.gender)}</div>
+      <div><div class="kid-list-name">${k.name}</div><div class="kid-list-role">${k.age} años</div></div>
+      <span style="font-size:20px;color:#c8a882;">›</span>
+    </div>`,
+          )
+          .join("");
+        showScreen("screenKidSelect");
       }
 
-      // ─── LOAD DATA ────────────────────────────────
+      function selectKidProfile(kidId) {
+        const kid = S.kids.find((k) => k.id === kidId);
+        if (!kid) return;
+        if (!kid.pin_hash) {
+          showToast("Este perfil no tiene PIN asignado aún");
+          return;
+        }
+        S.currentKid = kidId;
+        document.getElementById("pinScreenIcon").textContent = kidEmoji(
+          kid.gender,
+        );
+        document.getElementById("pinScreenName").textContent =
+          "Hola, " + kid.name + "!";
+        document.getElementById("pinEntryErr").textContent = "";
+        document.getElementById("pinBackBtn").onclick = () =>
+          showScreen("screenKidSelect");
+        pins.entry = "";
+        renderPinDisplay("pinEntryDisp", pins.entry);
+        showScreen("screenPin");
+      }
+
+      async function checkEntryPin() {
+        // Determine what we're checking
+        const target =
+          S.mode === "enteringParent"
+            ? S.parent
+            : S.kids.find((k) => k.id === S.currentKid);
+        if (!target) return;
+        const ok = await verifyPin(pins.entry, target.pin_hash);
+        if (ok) {
+          if (S.mode === "enteringParent") {
+            S.mode = "parent";
+            enterParentMode();
+          } else {
+            S.mode = "kid";
+            enterKidMode();
+          }
+        } else if (pins.entry.length === 6) {
+          pinEntryError();
+        } else if (pins.entry.length >= 4) {
+          // wait for more
+        }
+      }
+
+      function pinEntryError() {
+        document
+          .querySelectorAll("#pinEntryDisp .pin-bubble")
+          .forEach((b) => b.classList.add("error"));
+        document.getElementById("pinEntryErr").textContent = "PIN incorrecto";
+        setTimeout(() => {
+          pins.entry = "";
+          renderPinDisplay("pinEntryDisp", pins.entry);
+          document.getElementById("pinEntryErr").textContent = "";
+          document
+            .querySelectorAll("#pinEntryDisp .pin-bubble")
+            .forEach((b) => b.classList.remove("error"));
+        }, 800);
+      }
+
+      function pinBack() {
+        showScreen("screenKidSelect");
+      }
+
+      // ══════════════════════════════════════
+      // ENTER MODES
+      // ══════════════════════════════════════
+      function enterParentMode() {
+        const pg = S.parent.gender;
+        document.getElementById("navDadIcon").textContent = parentEmoji(pg);
+        document.getElementById("navDadLabel").textContent =
+          pg === "mother" ? "Mamá" : "Papá";
+        document.getElementById("dadHola").textContent = "Panel de";
+        document.getElementById("dadTitle").textContent =
+          pg === "mother" ? "Mamá" : "Papá";
+        document.getElementById("familyCodeDisplay").textContent =
+          S.parent.family_code || "------";
+        // Load tasks for all kids
+        renderDadPanel();
+        showApp("appDad", document.querySelector(".nav-btn:nth-child(2)"));
+      }
+
+      function enterKidMode() {
+        S.mode = "kid";
+        const kid = getKidObj();
+        if (!kid) return;
+        // Load family data
+        loadFamilyData().then(() => {
+          renderTasksScreen();
+          showApp("appTasks", document.querySelector(".nav-btn:nth-child(1)"));
+        });
+      }
+
+      // ══════════════════════════════════════
+      // LOAD DATA
+      // ══════════════════════════════════════
       async function loadAll() {
         if (!S.user || !S.parent) return;
         setLoading(true);
@@ -2389,11 +2597,17 @@
           wk = getWeekKey();
         const [kR, tR, rR] = await Promise.all([
           sb.from("kids").select("*").eq("parent_id", pid).order("created_at"),
-          sb.from("tasks").select("*").eq("parent_id", pid).order("created_at"),
+          sb
+            .from("tasks")
+            .select("*")
+            .eq("parent_id", pid)
+            .eq("active", true)
+            .order("created_at"),
           sb
             .from("rewards")
             .select("*")
             .eq("parent_id", pid)
+            .eq("active", true)
             .order("created_at"),
         ]);
         S.kids = kR.data || [];
@@ -2423,49 +2637,88 @@
         setLoading(false);
       }
 
-      // ─── BANNER ───────────────────────────────────
-      function renderBanner() {
-        const avail = S.rewards.filter((r) => r.stock > 0);
-        document.getElementById("rewardCardsRow").innerHTML =
-          avail
-            .map(
-              (r) =>
-                `<div class="reward-card ${r.rarity}"><div class="rc-emoji">${r.emoji}</div><div class="rc-name">${r.name}</div><span class="rc-pts-badge ${r.rarity}">${r.pts} pts</span></div>`,
-            )
-            .join("") ||
-          '<div style="color:rgba(255,255,255,.7);font-size:13px;font-weight:700;padding:20px 0 16px;">Sin recompensas disponibles</div>';
+      // Load data for kid mode (uses foundFamily's parent_id)
+      async function loadFamilyData() {
+        setLoading(true);
+        const pid = S.foundFamily.id,
+          wk = getWeekKey();
+        const [tR, rR] = await Promise.all([
+          sb
+            .from("tasks")
+            .select("*")
+            .eq("parent_id", pid)
+            .eq("active", true)
+            .order("created_at"),
+          sb
+            .from("rewards")
+            .select("*")
+            .eq("parent_id", pid)
+            .eq("active", true)
+            .order("created_at"),
+        ]);
+        S.tasks = tR.data || [];
+        S.rewards = rR.data || [];
+        const kid = getKidObj();
+        if (kid) {
+          const [cR, eR] = await Promise.all([
+            sb
+              .from("completions")
+              .select("*")
+              .eq("kid_id", kid.id)
+              .eq("week_key", wk),
+            sb
+              .from("evidence")
+              .select("*")
+              .eq("kid_id", kid.id)
+              .order("created_at", { ascending: false }),
+          ]);
+          S.completions = cR.data || [];
+          S.evidence = eR.data || [];
+        }
+        setLoading(false);
       }
 
-      // ─── KID SCREEN ───────────────────────────────
-      function renderKidScreen() {
-        if (!S.kids.length) {
-          document.getElementById("kidGreeting").textContent = "Sin hijos";
-          document.getElementById("kidTabsWrap").innerHTML = "";
-          document.getElementById("kidTaskList").innerHTML =
-            '<div style="text-align:center;color:#c4b0a0;padding:40px;font-size:14px;font-weight:700;">Agregá un hijo desde el panel.</div>';
-          return;
-        }
+      // ══════════════════════════════════════
+      // TASKS SCREEN
+      // ══════════════════════════════════════
+      function renderTasksScreen() {
         const kid = getKidObj();
         if (!kid) return;
-        // Tabs: hijos + botón volver al selector
-        document.getElementById("kidTabsWrap").innerHTML =
-          S.kids
-            .map(
-              (k) =>
-                `<div class="kid-tab${k.id === S.currentKid ? " active" : ""}" onclick="switchKid('${k.id}')"><span style="font-size:18px">${kidEmoji(k.gender)}</span>${k.name}</div>`,
-            )
-            .join("") +
-          `<div class="kid-tab" onclick="showProfileScreen()" style="background:#fdf3e7;border-color:#e8c99a;color:#9e6030;">⇄ Cambiar</div>`;
-        document.getElementById("kidHola").textContent = "👋 ¡Hola,";
-        document.getElementById("kidGreeting").textContent = kid.name;
-        document.getElementById("kidAvatarCircle").textContent = kidEmoji(
+        const isParent = S.mode === "parent";
+
+        document.getElementById("tasksHola").textContent = isParent
+          ? "Vista de"
+          : "👋 ¡Hola,";
+        document.getElementById("tasksTitle").textContent = kid.name;
+        document.getElementById("tasksAvatar").textContent = kidEmoji(
           kid.gender,
         );
+
+        // Tabs (solo padre)
+        const tabsWrap = document.getElementById("kidTabsWrap");
+        if (isParent) {
+          tabsWrap.style.display = "flex";
+          tabsWrap.innerHTML = S.kids
+            .map(
+              (k) => `
+      <div style="flex-shrink:0;padding:10px 14px;border-radius:14px;border:1.5px solid ${k.id === S.currentKid ? "#7c5cbf" : "#e8e0d5"};background:${k.id === S.currentKid ? "linear-gradient(135deg,#8b6cd0,#6a4aaf)" : "#fff"};color:${k.id === S.currentKid ? "#fff" : "#9e8a7a"};font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:'Nunito',sans-serif;" onclick="switchKid('${k.id}')">
+        <span style="font-size:18px">${kidEmoji(k.gender)}</span>${k.name}
+      </div>`,
+            )
+            .join("");
+        } else {
+          tabsWrap.style.display = "none";
+        }
+
+        // Banner
+        renderBanner();
+
+        // Level
         const lv = getLevel(kid.total_pts || 0);
         document.getElementById("levelName").textContent =
           lv.icon + " " + lv.name;
         document.getElementById("levelSub").textContent =
-          "Total acumulado: " + (kid.total_pts || 0) + " pts";
+          "Total: " + (kid.total_pts || 0) + " pts";
         document.getElementById("kidPtsDisplay").textContent = kid.pts || 0;
         const cur = (kid.pts || 0) % SOBRE_PTS,
           pct = Math.min(100, Math.round((cur / SOBRE_PTS) * 100));
@@ -2477,14 +2730,18 @@
           (kid.streak || 0) > 0
             ? `<div class="streak-pill">🔥 Racha de ${kid.streak} semana${kid.streak > 1 ? "s" : ""}</div>`
             : "";
+
+        // Active reward
         const ar = kid.active_reward;
         document.getElementById("activeRewardWrap").innerHTML = ar
           ? `<div class="active-rw-card"><span style="font-size:28px">${ar.emoji}</span><div><div style="font-size:10px;font-weight:900;color:#c8820a;text-transform:uppercase;">🏆 Recompensa activa</div><div style="font-size:14px;font-weight:800;color:#2d1a0e;margin-top:1px;">${ar.name}</div><div style="font-size:11px;font-weight:700;color:${RARITIES[ar.rarity]?.color || "#888"};margin-top:1px;">${RARITIES[ar.rarity]?.label || ""}</div></div></div>`
           : `<div class="active-rw-card"><div style="color:#c4b0a0;font-size:13px;font-weight:700;">⭐ Completá tareas y ganate una recompensa</div></div>`;
+
+        // Tasks
         const tasks = S.tasks.filter(
           (t) => t.kid_id === "both" || t.kid_id === kid.id,
         );
-        document.getElementById("kidTaskList").innerHTML = tasks.length
+        document.getElementById("taskList").innerHTML = tasks.length
           ? tasks
               .map((t) => {
                 const done = S.completions.find(
@@ -2496,56 +2753,59 @@
                       minute: "2-digit",
                     })
                   : "";
-                return `<div class="task-item${done ? " done" : ""}" onclick="${done ? "" : "handleTaskClick('" + t.id + "')"}"><div class="task-check">${done ? "✓" : ""}</div><div class="task-icon-wrap">${t.emoji}</div><div style="flex:1;"><div class="task-name-txt">${t.name}</div><div class="task-pts-txt">+${t.pts} pts${done ? " · ✅ " + at : ""}</div></div><span class="task-star">${done ? "⭐" : "☆"}</span></div>`;
+                const clickable = !done && !isParent;
+                return `<div class="task-item${done ? " done" : ""}${isParent ? " readonly" : ""}" ${clickable ? `onclick="openTaskModal('${t.id}')"` : ""}><div class="task-check">${done ? "✓" : ""}</div><div class="task-icon-wrap">${t.emoji}</div><div style="flex:1;"><div class="task-name-txt">${t.name}</div><div class="task-pts-txt">+${t.pts} pts${done ? " · ✅ " + at : ""}</div></div><span class="task-star">${done ? "⭐" : "☆"}</span></div>`;
               })
               .join("")
           : '<div style="text-align:center;color:#c4b0a0;padding:28px;font-size:14px;font-weight:700;">Sin tareas asignadas</div>';
-        const canOpen =
-          (kid.pts || 0) >= SOBRE_PTS && S.rewards.some((r) => r.stock > 0);
-        const btn = document.getElementById("openSobreBtn");
-        btn.disabled = !canOpen;
-        btn.textContent = canOpen
-          ? "¡Abrir sobre! 🎁"
-          : `Abrir sobre 🎁 · faltan ${SOBRE_PTS - ((kid.pts || 0) % SOBRE_PTS || SOBRE_PTS)} pts`;
+
+        // Sobre btn — solo para hijos
+        const sobreBtn = document.getElementById("sobreBtn");
+        if (isParent) {
+          sobreBtn.style.display = "none";
+        } else {
+          sobreBtn.style.display = "flex";
+          const canOpen =
+            (kid.pts || 0) >= SOBRE_PTS && S.rewards.some((r) => r.stock > 0);
+          sobreBtn.disabled = !canOpen;
+          sobreBtn.textContent = canOpen
+            ? "¡Abrir sobre! 🎁"
+            : `Abrir sobre 🎁 · faltan ${SOBRE_PTS - ((kid.pts || 0) % SOBRE_PTS || SOBRE_PTS)} pts`;
+        }
+      }
+
+      function renderBanner() {
+        const avail = S.rewards.filter((r) => r.stock > 0);
+        document.getElementById("rewardCardsRow").innerHTML =
+          avail
+            .map(
+              (r) => `
+    <div class="reward-card ${r.rarity}">
+      <div class="rc-emoji">${r.emoji}</div>
+      <div class="rc-name">${r.name}</div>
+      <span class="rc-pts-badge ${r.rarity}">${r.pts} pts</span>
+    </div>`,
+            )
+            .join("") ||
+          '<div style="color:rgba(255,255,255,.7);font-size:13px;font-weight:700;padding:20px 0 16px;">Sin recompensas disponibles</div>';
       }
 
       function switchKid(id) {
-        // Si es el mismo hijo, no hace nada
-        if (id === S.currentKid) return;
-        // Pide PIN del otro hijo
-        const kid = S.kids.find((k) => k.id === id);
-        if (!kid) return;
-        if (!kid.pin_hash) {
-          showToast("Este hijo no tiene PIN asignado");
-          return;
-        }
-        pinTarget = { type: "kid", data: kid };
-        pinBuffer = "";
-        document.getElementById("pinScreenIcon").textContent = kidEmoji(
-          kid.gender,
-        );
-        document.getElementById("pinScreenName").textContent =
-          "Hola, " + kid.name + "!";
-        document.getElementById("pinScreenErr").textContent = "";
-        renderPinDisplay("pinScreenDisplay", pinBuffer);
-        document
-          .querySelectorAll(".screen")
-          .forEach((s) => s.classList.remove("active"));
-        document.getElementById("pinScreen").classList.add("show");
+        S.currentKid = id;
+        renderTasksScreen();
       }
 
-      // ─── TASK COMPLETE ────────────────────────────
-      function handleTaskClick(taskId) {
-        S.currentPhotoTask = taskId;
+      // ══════════════════════════════════════
+      // TASK COMPLETE
+      // ══════════════════════════════════════
+      function openTaskModal(taskId) {
+        S.currentTaskId = taskId;
         S.selectedEmojis = [];
-        document.getElementById("photoMsg").value = "";
+        document.getElementById("taskMsg").value = "";
         document
           .querySelectorAll(".emoji-btn")
           .forEach((e) => e.classList.remove("sel"));
-        document.getElementById("photoModal").classList.add("show");
-      }
-      function closePhotoModal() {
-        document.getElementById("photoModal").classList.remove("show");
+        document.getElementById("taskModal").classList.add("show");
       }
       function toggleEmoji(el, emoji) {
         el.classList.toggle("sel");
@@ -2554,7 +2814,7 @@
           : S.selectedEmojis.filter((e) => e !== emoji);
       }
       async function submitTask() {
-        const taskId = S.currentPhotoTask;
+        const taskId = S.currentTaskId;
         if (!taskId) return;
         const kid = getKidObj();
         const task = S.tasks.find((t) => t.id === taskId);
@@ -2563,16 +2823,14 @@
         await sb
           .from("completions")
           .insert({ kid_id: kid.id, task_id: taskId, week_key: wk });
-        await sb
-          .from("evidence")
-          .insert({
-            kid_id: kid.id,
-            task_id: taskId,
-            task_name: task.name,
-            emojis: S.selectedEmojis.join(" "),
-            message: document.getElementById("photoMsg").value.trim(),
-            photo_url: null,
-          });
+        await sb.from("evidence").insert({
+          kid_id: kid.id,
+          task_id: taskId,
+          task_name: task.name,
+          emojis: S.selectedEmojis.join(" "),
+          message: document.getElementById("taskMsg").value.trim(),
+          photo_url: null,
+        });
         await sb
           .from("kids")
           .update({
@@ -2580,15 +2838,16 @@
             total_pts: (kid.total_pts || 0) + task.pts,
           })
           .eq("id", kid.id);
-        closePhotoModal();
+        closeModal("taskModal");
         setLoading(false);
         showToast("¡Tarea completada! +" + task.pts + " pts 🎉");
-        await loadAll();
-        renderKidScreen();
-        renderBanner();
+        await loadFamilyData();
+        renderTasksScreen();
       }
 
-      // ─── SOBRE ────────────────────────────────────
+      // ══════════════════════════════════════
+      // SOBRE
+      // ══════════════════════════════════════
       async function tryOpenSobre() {
         const kid = getKidObj();
         if (!kid || (kid.pts || 0) < SOBRE_PTS) return;
@@ -2603,7 +2862,7 @@
             return `<div class="choice-item" onclick="selectReward('${r.id}')"><div style="font-size:32px;width:48px;text-align:center;">${r.emoji}</div><div style="flex:1;"><div style="font-size:14px;font-weight:800;color:#2d1a0e;">${r.name}</div><div style="font-size:11px;font-weight:700;color:${ri.color};margin-top:1px;">${ri.label}</div><div style="font-size:12px;color:#9e8a7a;font-weight:600;margin-top:1px;">${r.pts} pts · ${r.stock} disp.</div></div><span style="font-size:20px;color:#c8a882;">›</span></div>`;
           })
           .join("");
-        document.getElementById("chooseOverlay").classList.add("show");
+        document.getElementById("chooseModal").classList.add("show");
       }
       async function selectReward(id) {
         const kid = getKidObj();
@@ -2614,19 +2873,120 @@
           .from("rewards")
           .update({ stock: r.stock - 1 })
           .eq("id", id);
+        // Reset pts to 0 on redeem
         await sb
           .from("kids")
-          .update({ pts: (kid.pts || 0) - SOBRE_PTS, active_reward: r })
+          .update({ pts: 0, active_reward: r })
           .eq("id", kid.id);
-        document.getElementById("chooseOverlay").classList.remove("show");
+        closeModal("chooseModal");
         setLoading(false);
         showToast("¡Recompensa ganada! " + r.emoji);
-        await loadAll();
-        renderKidScreen();
+        await loadFamilyData();
+        renderTasksScreen();
         renderBanner();
       }
 
-      // ─── DAD SCREEN ───────────────────────────────
+      // ══════════════════════════════════════
+      // DAD PANEL
+      // ══════════════════════════════════════
+      function renderDadPanel() {
+        renderKidsSummary();
+        renderTasksListDad();
+        renderRewardsListDad();
+        renderEvidenceList();
+        initTaskEmojiPicker();
+        const sel = document.getElementById("newTaskKid");
+        sel.innerHTML =
+          '<option value="both">Todos</option>' +
+          S.kids
+            .map(
+              (k) =>
+                `<option value="${k.id}">${kidEmoji(k.gender)} ${k.name}</option>`,
+            )
+            .join("");
+      }
+
+      function renderKidsSummary() {
+        const wk = getWeekKey();
+        document.getElementById("dadKidsSummary").innerHTML =
+          S.kids
+            .map((k) => {
+              const kidTasks = S.tasks.filter(
+                (t) => t.kid_id === "both" || t.kid_id === k.id,
+              );
+              const done = S.completions.filter((c) => c.kid_id === k.id);
+              return `<div class="kid-summary-card">
+      <div class="kid-summary-top">
+        <span style="font-size:32px">${kidEmoji(k.gender)}</span>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:800;color:#2d1a0e;">${k.name} · ${k.age} años</div>
+          <div style="font-size:12px;color:#9e8a7a;font-weight:600;margin-top:2px;">${done.length}/${kidTasks.length} tareas · ${k.pts || 0} pts disponibles</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="kid-summary-pts">${k.pts || 0}</div>
+          <div class="kid-summary-lbl">pts</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="set-pin-btn" onclick="openSetKidPin('${k.id}')">${k.pin_hash ? "🔑 Cambiar PIN" : "🔑 Asignar PIN"}</button>
+        <button class="del-btn" style="font-size:13px;padding:4px 8px;background:#fde8e8;border-radius:8px;border:none;" onclick="deleteKid('${k.id}')">🗑 Eliminar</button>
+      </div>
+    </div>`;
+            })
+            .join("") ||
+          '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">No hay hijos aún</div>';
+      }
+
+      function renderTasksListDad() {
+        document.getElementById("dadTasksList").innerHTML = S.tasks.length
+          ? S.tasks
+              .map((t) => {
+                const kl =
+                  t.kid_id === "both"
+                    ? "Todos"
+                    : S.kids.find((k) => k.id === t.kid_id)?.name || "?";
+                return `<div class="row-item"><span style="font-size:18px">${t.emoji}</span><span class="row-name">${t.name}</span><span class="row-pts">${t.pts}pts</span><span style="font-size:11px;background:#f0ece4;padding:2px 7px;border-radius:10px;color:#9e8a7a;font-weight:700;">${kl}</span><button class="del-btn" onclick="deleteTask('${t.id}')">🗑</button></div>`;
+              })
+              .join("")
+          : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">Sin tareas</div>';
+      }
+
+      function renderRewardsListDad() {
+        document.getElementById("dadRewardsList").innerHTML = S.rewards.length
+          ? S.rewards
+              .map((r) => {
+                const ri = RARITIES[r.rarity];
+                return `<div class="row-item"><span style="font-size:22px">${r.emoji}</span><div style="flex:1;"><div style="font-size:13px;font-weight:800;">${r.name}</div><div style="font-size:11px;font-weight:700;color:${ri.color};margin-top:1px;">${ri.label} · ${r.pts} pts</div></div><span class="stock-pill${r.stock === 0 ? " out" : ""}">${r.stock === 0 ? "Sin stock" : r.stock + " disp."}</span><button class="icon-btn" onclick="restock('${r.id}')">+1</button><button class="icon-btn del2" onclick="deleteReward('${r.id}')">🗑</button></div>`;
+              })
+              .join("")
+          : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">Sin recompensas</div>';
+      }
+
+      function renderEvidenceList() {
+        const el = document.getElementById("dadEvidenceList");
+        if (!el) return;
+        const allEv = S.evidence.filter((ev) =>
+          S.kids.some((k) => k.id === ev.kid_id),
+        );
+        el.innerHTML = allEv.length
+          ? allEv
+              .map((ev) => {
+                const kn = S.kids.find((k) => k.id === ev.kid_id)?.name || "?";
+                const at = new Date(ev.created_at).toLocaleString("es", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+                return `<div class="ev-row"><div style="flex:1;"><div style="font-size:13px;font-weight:800;">${kn} · ${ev.task_name}</div><div style="font-size:13px;margin-top:2px;">${ev.emojis || ""} ${ev.message || ""}</div><div style="font-size:11px;color:#9e8a7a;margin-top:1px;">${at}</div></div>${ev.approved ? '<span class="approved-lbl">✓</span>' : `<button class="approve-btn" onclick="approveEvidence('${ev.id}','${ev.kid_id}')">👍 +5pts</button>`}</div>`;
+              })
+              .join("")
+          : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">Sin evidencias aún</div>';
+      }
+
+      // ══════════════════════════════════════
+      // DAD ACTIONS
+      // ══════════════════════════════════════
       function initTaskEmojiPicker() {
         const el = document.getElementById("taskEmojiPicker");
         if (!el) return;
@@ -2643,113 +3003,30 @@
         el.classList.add("sel");
       }
 
-      function renderTasksList() {
-        const sel = document.getElementById("newTaskKid");
-        if (sel)
-          sel.innerHTML =
-            '<option value="both">Todos</option>' +
-            S.kids
-              .map(
-                (k) =>
-                  `<option value="${k.id}">${kidEmoji(k.gender)} ${k.name}</option>`,
-              )
-              .join("");
-        const el = document.getElementById("dadAllTasks");
-        if (!el) return;
-        el.innerHTML = S.tasks.length
-          ? S.tasks
-              .map((t) => {
-                const kl =
-                  t.kid_id === "both"
-                    ? "Todos"
-                    : S.kids.find((k) => k.id === t.kid_id)?.name || "?";
-                return `<div class="row-item"><span style="font-size:18px">${t.emoji}</span><span class="row-name">${t.name}</span><span class="row-pts">${t.pts}pts</span><span style="font-size:11px;background:#f0ece4;padding:2px 7px;border-radius:10px;color:#9e8a7a;font-weight:700;">${kl}</span><button class="del-btn" onclick="deleteTask('${t.id}')">🗑</button></div>`;
-              })
-              .join("")
-          : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">Sin tareas</div>';
-      }
-
-      function renderRewardsList() {
-        const el = document.getElementById("dadRewardsList");
-        if (!el) return;
-        el.innerHTML = S.rewards
-          .map((r) => {
-            const ri = RARITIES[r.rarity];
-            return `<div class="row-item"><span style="font-size:22px">${r.emoji}</span><div style="flex:1;"><div style="font-size:13px;font-weight:800;">${r.name}</div><div style="font-size:11px;font-weight:700;color:${ri.color};margin-top:1px;">${ri.label} · ${r.pts} pts</div></div><span class="stock-pill${r.stock === 0 ? " out" : ""}">${r.stock === 0 ? "Sin stock" : r.stock + " disp."}</span><button class="icon-btn" onclick="restock('${r.id}')">+1</button><button class="icon-btn del2" onclick="deleteReward('${r.id}')">🗑</button></div>`;
-          })
-          .join("");
-      }
-
-      function renderKidsList() {
-        const el = document.getElementById("dadKidsList");
-        if (!el) return;
-        el.innerHTML = S.kids
-          .map(
-            (k) => `
-    <div class="row-item">
-      <span style="font-size:28px">${kidEmoji(k.gender)}</span>
-      <div style="flex:1;"><div style="font-size:14px;font-weight:800;">${k.name}</div><div style="font-size:12px;font-weight:600;color:#9e8a7a;">${k.age} años · ${k.total_pts || 0} pts</div></div>
-      <button class="set-pin-btn" onclick="openSetKidPin('${k.id}')">${k.pin_hash ? "🔑 Cambiar PIN" : "🔑 Asignar PIN"}</button>
-      <button class="del-btn" onclick="deleteKid('${k.id}')">🗑</button>
-    </div>`,
-          )
-          .join("");
-      }
-
-      function renderEvidenceList() {
-        const el = document.getElementById("evidenceList");
-        if (!el) return;
-        const allEv = S.evidence.filter((ev) =>
-          S.kids.some((k) => k.id === ev.kid_id),
-        );
-        el.innerHTML = allEv.length
-          ? allEv
-              .map((ev) => {
-                const kn = S.kids.find((k) => k.id === ev.kid_id)?.name || "?";
-                const at = new Date(ev.created_at).toLocaleString("es", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
-                return `<div class="ev-row"><div style="flex:1;"><div style="font-size:13px;font-weight:800;">${kn} · ${ev.task_name}</div><div style="font-size:13px;margin-top:2px;">${ev.emojis || ""} ${ev.message || ""}</div><div style="font-size:11px;color:#9e8a7a;font-weight:600;margin-top:1px;">${at}</div></div>${ev.approved ? '<span class="approved-lbl">✓</span>' : `<button class="approve-btn" onclick="approveEvidence('${ev.id}','${ev.kid_id}')">👍 +5pts</button>`}</div>`;
-              })
-              .join("")
-          : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">Sin evidencias aún</div>';
-      }
-
-      function renderDadScreen() {
-        renderTasksList();
-        renderRewardsList();
-        renderKidsList();
-        renderEvidenceList();
-      }
-
       async function addTask() {
         const name = document.getElementById("newTaskName").value.trim();
         if (!name) return;
-        const pts = parseInt(document.getElementById("newTaskPts").value),
-          kid_id = document.getElementById("newTaskKid").value;
-        await sb
-          .from("tasks")
-          .insert({
-            name,
-            pts,
-            kid_id,
-            emoji: selectedTaskEmoji,
-            parent_id: S.user.id,
-          });
+        const pts = parseInt(document.getElementById("newTaskPts").value);
+        const kid_id = document.getElementById("newTaskKid").value;
+        await sb.from("tasks").insert({
+          name,
+          pts,
+          kid_id,
+          emoji: selectedTaskEmoji,
+          parent_id: S.user.id,
+          active: true,
+        });
         document.getElementById("newTaskName").value = "";
         selectedTaskEmoji = TASK_EMOJIS[0];
         initTaskEmojiPicker();
         showToast("Tarea agregada ✅");
         await loadAll();
-        renderTasksList();
+        renderTasksListDad();
       }
       async function deleteTask(id) {
-        await sb.from("tasks").delete().eq("id", id);
+        await sb.from("tasks").update({ active: false }).eq("id", id);
         await loadAll();
-        renderTasksList();
+        renderTasksListDad();
       }
       async function addReward() {
         const name = document.getElementById("newRwName").value.trim();
@@ -2760,20 +3037,26 @@
         const rarity = document.getElementById("newRwRarity").value;
         const stock =
           parseInt(document.getElementById("newRwStock").value) || 2;
-        await sb
-          .from("rewards")
-          .insert({ name, emoji, rarity, pts, stock, parent_id: S.user.id });
+        await sb.from("rewards").insert({
+          name,
+          emoji,
+          rarity,
+          pts,
+          stock,
+          parent_id: S.user.id,
+          active: true,
+        });
         document.getElementById("newRwName").value = "";
         document.getElementById("newRwEmoji").value = "";
         document.getElementById("newRwPts").value = "";
         showToast("Recompensa agregada 🎁");
         await loadAll();
-        renderRewardsList();
+        renderRewardsListDad();
       }
       async function deleteReward(id) {
-        await sb.from("rewards").delete().eq("id", id);
+        await sb.from("rewards").update({ active: false }).eq("id", id);
         await loadAll();
-        renderRewardsList();
+        renderRewardsListDad();
       }
       async function restock(id) {
         const r = S.rewards.find((r) => r.id === id);
@@ -2783,14 +3066,13 @@
           .update({ stock: r.stock + 1 })
           .eq("id", id);
         await loadAll();
-        renderRewardsList();
+        renderRewardsListDad();
       }
       async function addKid() {
         const name = document.getElementById("newKidName").value.trim();
         if (!name) return;
         const age = parseInt(document.getElementById("newKidAge").value) || 10;
         const gender = document.getElementById("newKidGender").value;
-        // Primero insertar sin PIN
         const { data: newKid, error } = await sb
           .from("kids")
           .insert({
@@ -2811,10 +3093,17 @@
         document.getElementById("newKidName").value = "";
         document.getElementById("newKidAge").value = "";
         await loadAll();
-        renderKidsList();
-        renderTasksList();
+        renderKidsSummary();
+        const sel = document.getElementById("newTaskKid");
+        sel.innerHTML =
+          '<option value="both">Todos</option>' +
+          S.kids
+            .map(
+              (k) =>
+                `<option value="${k.id}">${kidEmoji(k.gender)} ${k.name}</option>`,
+            )
+            .join("");
         showToast(name + " agregado/a 👶");
-        // Abrir asignación de PIN inmediatamente
         openSetKidPin(newKid.id);
       }
       async function deleteKid(id) {
@@ -2826,8 +3115,7 @@
         if (S.currentKid === id)
           S.currentKid = S.kids.find((k) => k.id !== id)?.id || null;
         await loadAll();
-        renderKidsList();
-        renderTasksList();
+        renderKidsSummary();
       }
       async function approveEvidence(evId, kidId) {
         const kid = S.kids.find((k) => k.id === kidId);
@@ -2843,11 +3131,95 @@
         showToast("¡Aprobado! +5 pts 👍");
         await loadAll();
         renderEvidenceList();
+        renderKidsSummary();
       }
 
+      // ══════════════════════════════════════
+      // KID PIN
+      // ══════════════════════════════════════
+      function openSetKidPin(kidId) {
+        S.kidPinTarget = kidId;
+        pins.kid = "";
+        const kid = S.kids.find((k) => k.id === kidId);
+        document.getElementById("setKidPinTitle").textContent =
+          "PIN de " + (kid?.name || "hijo/a");
+        document.getElementById("kidPinErr").textContent = "";
+        renderPinDisplay("kidPinDisp", pins.kid);
+        document.getElementById("setKidPinModal").classList.add("show");
+      }
+      async function saveKidPin() {
+        if (isWeak(pins.kid)) {
+          document.getElementById("kidPinErr").textContent = "PIN muy fácil";
+          pins.kid = "";
+          renderPinDisplay("kidPinDisp", pins.kid);
+          return;
+        }
+        const hash = await hashPin(pins.kid);
+        await sb
+          .from("kids")
+          .update({ pin_hash: hash })
+          .eq("id", S.kidPinTarget);
+        closeModal("setKidPinModal");
+        showToast("PIN guardado ✅");
+        await loadAll();
+        renderKidsSummary();
+      }
+
+      // ══════════════════════════════════════
+      // NAV
+      // ══════════════════════════════════════
+      function navTo(appId, btn) {
+        document
+          .querySelectorAll(".app-screen")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(appId).classList.add("active");
+        btn.classList.add("active");
+        if (appId === "appTasks") renderTasksScreen();
+        if (appId === "appHistory") renderHistory();
+      }
+      function navToDad(btn) {
+        if (S.mode === "kid") {
+          showToast("Solo el padre/madre puede acceder");
+          return;
+        }
+        if (S.mode === "parent") {
+          navTo("appDad", btn);
+          renderDadPanel();
+        } else {
+          // Request parent PIN
+          S.mode = "enteringParent";
+          document.getElementById("pinScreenIcon").textContent = parentEmoji(
+            S.parent.gender,
+          );
+          document.getElementById("pinScreenName").textContent =
+            "Hola, " + S.parent.name + "!";
+          document.getElementById("pinEntryErr").textContent = "";
+          document.getElementById("pinBackBtn").onclick = () => {
+            S.mode = "parent";
+            showApp(
+              "appTasks",
+              document.querySelector(".nav-btn:nth-child(1)"),
+            );
+          };
+          pins.entry = "";
+          renderPinDisplay("pinEntryDisp", pins.entry);
+          showScreen("screenPin");
+        }
+      }
+
+      // ══════════════════════════════════════
+      // HISTORY
+      // ══════════════════════════════════════
       async function renderHistory() {
         const wk = getWeekKey();
-        const ids = S.kids.map((k) => k.id);
+        const pid = S.mode === "parent" ? S.user.id : S.foundFamily?.id;
+        if (!pid) return;
+        const kidsToShow =
+          S.mode === "parent" ? S.kids : [getKidObj()].filter(Boolean);
+        const ids = kidsToShow.map((k) => k.id);
         let comps = [];
         if (ids.length) {
           const { data } = await sb
@@ -2857,7 +3229,7 @@
             .eq("week_key", wk);
           comps = data || [];
         }
-        document.getElementById("historyContent").innerHTML = S.kids
+        document.getElementById("historyContent").innerHTML = kidsToShow
           .map((kid) => {
             const done = comps.filter((c) => c.kid_id === kid.id);
             const rows = done
@@ -2876,10 +3248,11 @@
           .join("");
       }
 
-      // ─── INIT ─────────────────────────────────────
+      // ══════════════════════════════════════
+      // INIT
+      // ══════════════════════════════════════
       async function init() {
         setLoading(true);
-        document.getElementById("mainNav").style.display = "none";
         if (
           window.location.hash &&
           window.location.hash.includes("access_token")
@@ -2887,7 +3260,7 @@
           setTimeout(() => {
             if (!S.user) {
               setLoading(false);
-              showProfileScreen();
+              showScreen("screenKidEntry");
             }
           }, 4000);
           return;
@@ -2912,7 +3285,7 @@
         }
         if (!session) {
           setLoading(false);
-          showProfileScreen();
+          showScreen("screenKidEntry");
           return;
         }
         S.user = session.user;
@@ -2923,13 +3296,14 @@
           .single();
         if (!parent) {
           setLoading(false);
-          document.getElementById("onboardScreen").classList.add("show");
+          showScreen("screenOnboard");
           return;
         }
         S.parent = parent;
+        S.mode = "parent";
         await loadAll();
         setLoading(false);
-        showProfileScreen();
+        enterParentMode();
       }
 
       sb.auth.onAuthStateChange(async (event, session) => {
@@ -2939,7 +3313,7 @@
           } catch (e) {}
           if (S.user) return;
           S.user = session.user;
-          document.getElementById("authScreen").classList.remove("show");
+          showScreen("screenOnboard");
           setLoading(true);
           const { data: parent } = await sb
             .from("parents")
@@ -2948,13 +3322,13 @@
             .single();
           if (!parent) {
             setLoading(false);
-            document.getElementById("onboardScreen").classList.add("show");
             return;
           }
           S.parent = parent;
+          S.mode = "parent";
           await loadAll();
           setLoading(false);
-          showProfileScreen();
+          enterParentMode();
         }
         if (event === "SIGNED_OUT") {
           try {
