@@ -1977,6 +1977,13 @@
 
       <div style="padding: 0 16px 16px">
         <button class="logout-btn" onclick="signOut()">🚪 Cerrar sesión</button>
+        <button
+          class="logout-btn"
+          style="background: #fff0f0; margin-top: 8px; font-size: 13px"
+          onclick="confirmDeleteAccount()"
+        >
+          🗑 Eliminar mi cuenta y todos los datos
+        </button>
       </div>
     </div>
 
@@ -2269,6 +2276,28 @@
           options: { redirectTo: window.location.origin },
         });
       }
+      async function confirmDeleteAccount() {
+        const ok = confirm(
+          "⚠️ Esto eliminará tu cuenta, todos tus hijos, tareas y recompensas. ¿Estás seguro?",
+        );
+        if (!ok) return;
+        setLoading(true);
+        // Borrar en orden por las foreign keys
+        const pid = S.user.id;
+        const kidIds = S.kids.map((k) => k.id);
+        if (kidIds.length) {
+          await sb.from("evidence").delete().in("kid_id", kidIds);
+          await sb.from("completions").delete().in("kid_id", kidIds);
+        }
+        await sb.from("tasks").delete().eq("parent_id", pid);
+        await sb.from("rewards").delete().eq("parent_id", pid);
+        await sb.from("kids").delete().eq("parent_id", pid);
+        await sb.from("parents").delete().eq("id", pid);
+        await sb.auth.signOut();
+        setLoading(false);
+        location.reload();
+      }
+
       async function signOut() {
         try {
           localStorage.removeItem("tasky-session");
@@ -3110,15 +3139,21 @@
         openSetKidPin(newKid.id);
       }
       async function deleteKid(id) {
-        if (S.kids.length <= 1) {
-          showToast("Debe haber al menos un hijo/a");
-          return;
-        }
         await sb.from("kids").delete().eq("id", id);
         if (S.currentKid === id)
           S.currentKid = S.kids.find((k) => k.id !== id)?.id || null;
         await loadAll();
         renderKidsSummary();
+        const sel = document.getElementById("newTaskKid");
+        if (sel)
+          sel.innerHTML =
+            '<option value="both">Todos</option>' +
+            S.kids
+              .map(
+                (k) =>
+                  `<option value="${k.id}">${kidEmoji(k.gender)} ${k.name}</option>`,
+              )
+              .join("");
       }
       async function approveEvidence(evId, kidId) {
         const kid = S.kids.find((k) => k.id === kidId);
