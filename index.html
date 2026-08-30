@@ -1381,49 +1381,37 @@
           <input
             class="code-digit"
             maxlength="1"
-            type="number"
-            min="0"
-            max="9"
+            type="tel"
             oninput="codeDigit(this, 0)"
           />
           <input
             class="code-digit"
             maxlength="1"
-            type="number"
-            min="0"
-            max="9"
+            type="tel"
             oninput="codeDigit(this, 1)"
           />
           <input
             class="code-digit"
             maxlength="1"
-            type="number"
-            min="0"
-            max="9"
+            type="tel"
             oninput="codeDigit(this, 2)"
           />
           <input
             class="code-digit"
             maxlength="1"
-            type="number"
-            min="0"
-            max="9"
+            type="tel"
             oninput="codeDigit(this, 3)"
           />
           <input
             class="code-digit"
             maxlength="1"
-            type="number"
-            min="0"
-            max="9"
+            type="tel"
             oninput="codeDigit(this, 4)"
           />
           <input
             class="code-digit"
             maxlength="1"
-            type="number"
-            min="0"
-            max="9"
+            type="tel"
             oninput="codeDigit(this, 5)"
           />
         </div>
@@ -2473,23 +2461,24 @@
       }
       async function submitFamilyCode(code) {
         const digits = document.querySelectorAll(".code-digit");
-        const fc =
+        const raw =
           code ||
           Array.from(digits)
             .map((d) => d.value)
             .join("");
-        if (fc.length !== 6) {
+        const fc = raw.padStart(6, "0"); // asegura 6 dígitos con ceros a la izquierda
+        if (fc.replace(/\D/g, "").length !== 6) {
           document.getElementById("codeErr").textContent =
             "Ingresá los 6 dígitos";
           return;
         }
         setLoading(true);
-        const { data: family } = await sb
+        const { data: family, error } = await sb
           .from("parents")
           .select("id,name,gender,family_code")
           .eq("family_code", fc)
           .single();
-        if (!family) {
+        if (error || !family) {
           setLoading(false);
           document.getElementById("codeErr").textContent =
             "Código no encontrado";
