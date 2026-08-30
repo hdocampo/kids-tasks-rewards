@@ -102,15 +102,10 @@
       .auth-bg {
         width: 100%;
         display: block;
-        position: absolute;
-        top: -130px;
       }
       .auth-bottom {
         padding: 16px 24px 36px;
         background: #ffe9c6;
-        position: absolute;
-        width: 100%;
-        bottom: -20px;
       }
       .google-btn {
         display: flex;
@@ -2345,13 +2340,15 @@
         const hash = await hashPin(pins.ob1);
         const name = document.getElementById("obName").value.trim();
         const fc = String(Math.floor(100000 + Math.random() * 900000));
-        const { error } = await sb.from("parents").insert({
-          id: S.user.id,
-          name,
-          gender: obGender,
-          pin_hash: hash,
-          family_code: fc,
-        });
+        const { error } = await sb
+          .from("parents")
+          .insert({
+            id: S.user.id,
+            name,
+            gender: obGender,
+            pin_hash: hash,
+            family_code: fc,
+          });
         if (error) {
           setLoading(false);
           showToast("Error: " + error.message);
@@ -2823,14 +2820,16 @@
         await sb
           .from("completions")
           .insert({ kid_id: kid.id, task_id: taskId, week_key: wk });
-        await sb.from("evidence").insert({
-          kid_id: kid.id,
-          task_id: taskId,
-          task_name: task.name,
-          emojis: S.selectedEmojis.join(" "),
-          message: document.getElementById("taskMsg").value.trim(),
-          photo_url: null,
-        });
+        await sb
+          .from("evidence")
+          .insert({
+            kid_id: kid.id,
+            task_id: taskId,
+            task_name: task.name,
+            emojis: S.selectedEmojis.join(" "),
+            message: document.getElementById("taskMsg").value.trim(),
+            photo_url: null,
+          });
         await sb
           .from("kids")
           .update({
@@ -3008,14 +3007,16 @@
         if (!name) return;
         const pts = parseInt(document.getElementById("newTaskPts").value);
         const kid_id = document.getElementById("newTaskKid").value;
-        await sb.from("tasks").insert({
-          name,
-          pts,
-          kid_id,
-          emoji: selectedTaskEmoji,
-          parent_id: S.user.id,
-          active: true,
-        });
+        await sb
+          .from("tasks")
+          .insert({
+            name,
+            pts,
+            kid_id,
+            emoji: selectedTaskEmoji,
+            parent_id: S.user.id,
+            active: true,
+          });
         document.getElementById("newTaskName").value = "";
         selectedTaskEmoji = TASK_EMOJIS[0];
         initTaskEmojiPicker();
@@ -3037,15 +3038,17 @@
         const rarity = document.getElementById("newRwRarity").value;
         const stock =
           parseInt(document.getElementById("newRwStock").value) || 2;
-        await sb.from("rewards").insert({
-          name,
-          emoji,
-          rarity,
-          pts,
-          stock,
-          parent_id: S.user.id,
-          active: true,
-        });
+        await sb
+          .from("rewards")
+          .insert({
+            name,
+            emoji,
+            rarity,
+            pts,
+            stock,
+            parent_id: S.user.id,
+            active: true,
+          });
         document.getElementById("newRwName").value = "";
         document.getElementById("newRwEmoji").value = "";
         document.getElementById("newRwPts").value = "";
