@@ -88,6 +88,9 @@
       .screen.active {
         display: block;
       }
+      #screenAuth.active {
+        background: #e2bacf;;
+      }
       .app-screen {
         display: none;
         min-height: 100vh;
@@ -101,10 +104,16 @@
       .auth-bg {
         width: 100%;
         display: block;
+        position: relative;
+        top: -40px;
       }
       .auth-bottom {
-        padding: 16px 24px 36px;
-        background: #ffe9c6;
+        margin: 0 auto;
+        position: absolute;
+        bottom: -4px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
       }
       .google-btn {
         display: flex;
@@ -427,6 +436,20 @@
       }
       .nav-btn.active .nav-icon {
         filter: brightness(0) invert(1);
+      }
+
+      .register-btn {
+        background: url(icons/register-button.png) center center no-repeat;
+        width: 100%;
+        height: 82px;
+        /* position: relative; */
+        background-size: auto 112px;
+        position: relative;
+      }
+
+      .register-btn img {
+        width: 100%;
+        display: none;
       }
 
       /* HEADER */
@@ -1174,35 +1197,49 @@
     <!-- ══════════════════════════════════════
      SCREEN: AUTH (padre, primera vez)
 ══════════════════════════════════════ -->
-    <div class="screen" id="screenAuth">
-      <img class="auth-bg" src="icons/splash.png" alt="Tasky" />
+    <div
+      class="screen"
+      id="screenAuth"
+      style="position: relative; overflow: hidden"
+    >
+      <img
+        class="auth-bg"
+        src="icons/splash.png"
+        alt="Tasky"
+        style="width: 100%; display: block"
+      />
       <div class="auth-bottom">
-        <button class="google-btn" onclick="loginWithGoogle()">
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            style="margin-right: 10px; flex-shrink: 0"
+        <div class="register-btn" onclick="loginWithGoogle()">
+          <img src="icons/register-button.png" alt="Entrar con Google" />
+        </div>
+        <div
+          style="
+            text-align: center;
+            margin-top: 12px;
+            position: relative;
+            z-index: 99999;
+          "
+        >
+          <button
+            style="
+              background: none;
+              border: none;
+              color: #7c5cbf;
+              font-size: 18px;
+              font-weight: 800;
+              cursor: pointer;
+              font-family: &quot;Nunito&quot;, sans-serif;
+              text-align: center;
+              margin-top: 10px;
+              top: -15px;
+              position: relative;
+              z-index: 99999;
+            "
+            onclick="showScreen('screenKidEntry')"
           >
-            <path
-              fill="#fff"
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-            />
-            <path
-              fill="#fff"
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-            />
-            <path
-              fill="#fff"
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-            />
-            <path
-              fill="#fff"
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-            />
-          </svg>
-          Registrate con Google
-        </button>
+            Soy hijo/a →
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1708,6 +1745,23 @@
         >
           👦
         </div>
+        <div
+          id="switchLabel"
+          style="
+            display: none;
+            position: absolute;
+            top: 108px;
+            right: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #7c5cbf;
+            text-align: center;
+            cursor: pointer;
+          "
+          onclick="showSwitchProfile()"
+        >
+          Cambiar
+        </div>
       </div>
       <!-- Kid tabs (solo en modo padre) -->
       <div
@@ -2020,7 +2074,11 @@
         </div>
         <span id="navDadLabel">Papá</span>
       </button>
-      <button class="nav-btn" onclick="navTo('appHistory', this)">
+      <button
+        class="nav-btn"
+        style="display: none"
+        onclick="navTo('appHistory', this)"
+      >
         <div class="nav-icon-wrap"><span class="nav-icon">📋</span></div>
         Historial
       </button>
@@ -2372,15 +2430,13 @@
         const hash = await hashPin(pins.ob1);
         const name = document.getElementById("obName").value.trim();
         const fc = String(Math.floor(100000 + Math.random() * 900000));
-        const { error } = await sb
-          .from("parents")
-          .insert({
-            id: S.user.id,
-            name,
-            gender: obGender,
-            pin_hash: hash,
-            family_code: fc,
-          });
+        const { error } = await sb.from("parents").insert({
+          id: S.user.id,
+          name,
+          gender: obGender,
+          pin_hash: hash,
+          family_code: fc,
+        });
         if (error) {
           setLoading(false);
           showToast("Error: " + error.message);
@@ -2528,9 +2584,11 @@
           .map(
             (k) => `
     <div class="kid-list-item" onclick="selectKidProfile('${k.id}')">
-      <div class="kid-list-icon">${kidEmoji(k.gender)}</div>
-      <div><div class="kid-list-name">${k.name}</div><div class="kid-list-role">${k.age} años</div></div>
-      <span style="font-size:20px;color:#c8a882;">›</span>
+      <div class="profile-sprite ${k.gender === "girl" ? "girl" : "boy"}"></div>
+      <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <div><div class="kid-list-name">${k.name}</div><div class="kid-list-role">${k.age} años</div></div>
+        <span style="font-size:20px;color:#c8a882;">›</span>
+      </div>
     </div>`,
           )
           .join("");
@@ -2559,7 +2617,6 @@
       }
 
       async function checkEntryPin() {
-        // Determine what we're checking
         const target =
           S.mode === "enteringParent"
             ? S.parent
@@ -2577,7 +2634,7 @@
         } else if (pins.entry.length === 6) {
           pinEntryError();
         } else if (pins.entry.length >= 4) {
-          // wait for more
+          // esperar más dígitos
         }
       }
 
@@ -2585,7 +2642,8 @@
         document
           .querySelectorAll("#pinEntryDisp .pin-bubble")
           .forEach((b) => b.classList.add("error"));
-        document.getElementById("pinEntryErr").textContent = "PIN incorrecto";
+        document.getElementById("pinEntryErr").textContent =
+          "PIN incorrecto, intentá de nuevo";
         setTimeout(() => {
           pins.entry = "";
           renderPinDisplay("pinEntryDisp", pins.entry);
@@ -2593,7 +2651,7 @@
           document
             .querySelectorAll("#pinEntryDisp .pin-bubble")
             .forEach((b) => b.classList.remove("error"));
-        }, 800);
+        }, 900);
       }
 
       function showSwitchProfile() {
@@ -2738,6 +2796,12 @@
         document.getElementById("tasksAvatar").textContent = kidEmoji(
           kid.gender,
         );
+        const switchLbl = document.getElementById("switchLabel");
+        if (!isParent && S.kids.length > 1) {
+          switchLbl.style.display = "block";
+        } else {
+          switchLbl.style.display = "none";
+        }
 
         // Tabs (solo padre)
         const tabsWrap = document.getElementById("kidTabsWrap");
@@ -2868,16 +2932,14 @@
         await sb
           .from("completions")
           .insert({ kid_id: kid.id, task_id: taskId, week_key: wk });
-        await sb
-          .from("evidence")
-          .insert({
-            kid_id: kid.id,
-            task_id: taskId,
-            task_name: task.name,
-            emojis: S.selectedEmojis.join(" "),
-            message: document.getElementById("taskMsg").value.trim(),
-            photo_url: null,
-          });
+        await sb.from("evidence").insert({
+          kid_id: kid.id,
+          task_id: taskId,
+          task_name: task.name,
+          emojis: S.selectedEmojis.join(" "),
+          message: document.getElementById("taskMsg").value.trim(),
+          photo_url: null,
+        });
         await sb
           .from("kids")
           .update({
@@ -3055,16 +3117,14 @@
         if (!name) return;
         const pts = parseInt(document.getElementById("newTaskPts").value);
         const kid_id = document.getElementById("newTaskKid").value;
-        await sb
-          .from("tasks")
-          .insert({
-            name,
-            pts,
-            kid_id,
-            emoji: selectedTaskEmoji,
-            parent_id: S.user.id,
-            active: true,
-          });
+        await sb.from("tasks").insert({
+          name,
+          pts,
+          kid_id,
+          emoji: selectedTaskEmoji,
+          parent_id: S.user.id,
+          active: true,
+        });
         document.getElementById("newTaskName").value = "";
         selectedTaskEmoji = TASK_EMOJIS[0];
         initTaskEmojiPicker();
@@ -3086,17 +3146,15 @@
         const rarity = document.getElementById("newRwRarity").value;
         const stock =
           parseInt(document.getElementById("newRwStock").value) || 2;
-        await sb
-          .from("rewards")
-          .insert({
-            name,
-            emoji,
-            rarity,
-            pts,
-            stock,
-            parent_id: S.user.id,
-            active: true,
-          });
+        await sb.from("rewards").insert({
+          name,
+          emoji,
+          rarity,
+          pts,
+          stock,
+          parent_id: S.user.id,
+          active: true,
+        });
         document.getElementById("newRwName").value = "";
         document.getElementById("newRwEmoji").value = "";
         document.getElementById("newRwPts").value = "";
