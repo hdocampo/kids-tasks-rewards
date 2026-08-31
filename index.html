@@ -1699,7 +1699,15 @@
       <div class="header">
         <div class="hola" id="tasksHola">👋 ¡Hola,</div>
         <div class="page-title" id="tasksTitle">...</div>
-        <div class="avatar-circle" id="tasksAvatar">👦</div>
+        <div
+          class="avatar-circle"
+          id="tasksAvatar"
+          onclick="showSwitchProfile()"
+          style="cursor: pointer"
+          title="Cambiar perfil"
+        >
+          👦
+        </div>
       </div>
       <!-- Kid tabs (solo en modo padre) -->
       <div
@@ -2588,7 +2596,9 @@
         }, 800);
       }
 
-      function pinBack() {
+      function showSwitchProfile() {
+        if (S.mode === "parent") return;
+        // Volver a la lista de hijos
         showScreen("screenKidSelect");
       }
 
