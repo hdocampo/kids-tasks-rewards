@@ -18,12 +18,14 @@
         box-sizing: border-box;
         margin: 0;
         padding: 0;
+        touch-action: pan-x pan-y;
       }
       body {
         font-family: "Nunito", sans-serif;
         background: #f7f3ee;
         color: #2d1a0e;
         min-height: 100vh;
+        touch-action: pan-x pan-y;
       }
 
       /* LOADING */
@@ -3387,6 +3389,33 @@
           .getRegistrations()
           .then((regs) => regs.forEach((r) => r.unregister()));
       }
+
+      // Bloqueo extra de zoom: iOS Safari ignora "user-scalable=no" en el
+      // viewport, así que frenamos el pellizco (pinch) y el doble-tap a mano.
+      document.addEventListener(
+        "gesturestart",
+        function (e) {
+          e.preventDefault();
+        },
+        { passive: false },
+      );
+      document.addEventListener(
+        "touchmove",
+        function (e) {
+          if (e.touches.length > 1) e.preventDefault();
+        },
+        { passive: false },
+      );
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (e) {
+          const now = Date.now();
+          if (now - lastTouchEnd <= 300) e.preventDefault();
+          lastTouchEnd = now;
+        },
+        { passive: false },
+      );
 
       init();
     </script>

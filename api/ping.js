@@ -1,7 +1,4 @@
 // api/ping.js
-// Cron job — mantiene Supabase activo haciendo un ping semanal
-// Tasky
-
 const { createClient } = require('@supabase/supabase-js');
 
 const sb = createClient(
@@ -11,7 +8,9 @@ const sb = createClient(
 
 module.exports = async function handler(req, res) {
   try {
-    const { data, error } = await sb.from('parents').select('id').limit(1);
+    const { error } = await sb
+      .from('heartbeat')
+      .upsert({ id: 1, pinged_at: new Date().toISOString() });
     if (error) throw error;
     console.log('[Tasky Ping] Supabase activo ✅', new Date().toISOString());
     res.status(200).json({ ok: true, ping: new Date().toISOString() });
