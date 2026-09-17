@@ -43,6 +43,12 @@
         opacity: 0;
         pointer-events: none;
       }
+      .loading-splash {
+        width: 72%;
+        max-width: 280px;
+        display: block;
+        margin-bottom: 4px;
+      }
       .spinner {
         width: 40px;
         height: 40px;
@@ -101,7 +107,93 @@
         display: block;
       }
 
-      /* AUTH */
+      /* ROLE SELECT */
+      .role-select-content {
+        height: 100%;
+        box-sizing: border-box;
+        padding: max(28px, env(safe-area-inset-top)) 24px
+          calc(20px + env(safe-area-inset-bottom, 0px));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .role-select-logo {
+        width: 120px;
+        max-width: 40vw;
+        display: block;
+        margin: 0 auto 10px;
+        flex: 0 0 auto;
+      }
+      .role-select-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #2d1a0e;
+        margin-bottom: 4px;
+        text-align: center;
+        flex: 0 0 auto;
+      }
+      .role-select-sub {
+        font-size: 11px;
+        font-weight: 600;
+        color: #9e8a7a;
+        margin-bottom: 16px;
+        text-align: center;
+        flex: 0 0 auto;
+      }
+      .role-cards-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .role-card {
+        display: block;
+        flex: 1 1 0;
+        min-height: 0;
+        width: auto;
+        max-width: 320px;
+        max-height: 200px;
+        aspect-ratio: 240 / 270;
+        background-image: url("icons/avatars-sprite.png");
+        background-repeat: no-repeat;
+        background-size: 300% 100%;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        border-radius: 20px;
+        transition: transform 0.12s;
+      }
+      .role-card:active {
+        transform: scale(0.97);
+      }
+      .role-card.papa {
+        background-position: 0% 0%;
+      }
+      .role-card.hijo {
+        background-position: 50% 0%;
+      }
+      .role-card.hija {
+        background-position: 100% 0%;
+      }
+
+      .role-select-footer {
+        flex: 0 0 auto;
+        margin-top: 14px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: #2d1a0e;
+      }
+      .role-select-footer a {
+        color: #7c5cbf;
+        font-weight: 900;
+        text-decoration: none;
+      }
       .auth-bg {
         width: 100%;
         display: block;
@@ -689,19 +781,6 @@
         background: #f5f5f5;
         border-color: #eee;
       }
-      .task-item.pending {
-        background: #fff8ef;
-        border-color: #f5deb8;
-      }
-      .task-item.pending .task-check {
-        background: #fff;
-        border-color: #f0b840;
-        color: #c8820a;
-      }
-      .task-item.pending .task-name-txt {
-        color: #2d1a0e;
-        text-decoration: none;
-      }
       .task-item.readonly {
         cursor: default;
       }
@@ -914,33 +993,6 @@
         font-family: "Nunito", sans-serif;
         white-space: nowrap;
       }
-      .ev-row {
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
-        padding: 11px 0;
-        border-bottom: 1px solid #f0ece8;
-      }
-      .approve-btn {
-        font-size: 11px;
-        background: #f0eafb;
-        color: #7c5cbf;
-        padding: 5px 10px;
-        border-radius: 9px;
-        border: 1.5px solid #d4c0ec;
-        cursor: pointer;
-        font-weight: 800;
-        white-space: nowrap;
-        font-family: "Nunito", sans-serif;
-      }
-      .approved-lbl {
-        font-size: 11px;
-        background: #e8f0e0;
-        color: #5a7a4a;
-        padding: 3px 9px;
-        border-radius: 9px;
-        font-weight: 800;
-      }
       .logout-btn {
         display: flex;
         align-items: center;
@@ -979,19 +1031,6 @@
       .kid-summary-lbl {
         font-size: 11px;
         color: #9e8a7a;
-        font-weight: 700;
-      }
-      .kid-tasks-preview {
-        margin-top: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .kid-task-preview-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
         font-weight: 700;
       }
 
@@ -1086,39 +1125,6 @@
         transform: scale(0.98);
         border-color: #8b6cd0;
       }
-      .msg-input {
-        width: 100%;
-        background: #f7f3ee;
-        border: 1.5px solid #ede8e0;
-        border-radius: 12px;
-        padding: 11px 14px;
-        color: #2d1a0e;
-        font-size: 14px;
-        font-family: "Nunito", sans-serif;
-        font-weight: 600;
-        margin: 4px 0;
-      }
-      .msg-input::placeholder {
-        color: #c4b0a0;
-      }
-      .emoji-row {
-        display: flex;
-        gap: 7px;
-        flex-wrap: wrap;
-        margin: 6px 0 10px;
-      }
-      .emoji-btn {
-        font-size: 22px;
-        background: #f7f3ee;
-        border: 1.5px solid #ede8e0;
-        border-radius: 10px;
-        padding: 5px 9px;
-        cursor: pointer;
-      }
-      .emoji-btn.sel {
-        border-color: #8b6cd0;
-        background: #f0eafb;
-      }
       .btn-primary {
         background: linear-gradient(135deg, #8b6cd0, #6a4aaf);
         color: #fff;
@@ -1191,22 +1197,42 @@
   </head>
   <body>
     <div class="loading-overlay" id="loadingOverlay">
+      <img class="loading-splash" src="icons/splash.png" alt="Tasky" />
       <div class="spinner"></div>
-      <div
-        style="
-          font-size: 20px;
-          font-weight: 900;
-          color: #7c5cbf;
-          margin-top: 8px;
-        "
-      >
-        Tasky
-      </div>
-      <div style="font-size: 13px; font-weight: 600; color: #9e8a7a">
-        Cargando...
-      </div>
     </div>
     <div class="toast" id="toast"></div>
+
+    <!-- ══════════════════════════════════════
+     SCREEN: ROLE SELECT (¿quién sos?)
+══════════════════════════════════════ -->
+    <div class="screen" id="screenRoleSelect">
+      <div class="role-select-content">
+        <img class="role-select-logo" src="icons/logo.png" alt="Tasky" />
+        <div class="role-select-title">¿Quién sos?</div>
+        <div class="role-select-sub">Elegí tu perfil para continuar</div>
+        <div class="role-cards-wrap">
+          <button
+            class="role-card papa"
+            aria-label="Papá o Mamá"
+            onclick="showScreen('screenAuth')"
+          ></button>
+          <button
+            class="role-card hijo"
+            aria-label="Hijo"
+            onclick="showScreen('screenKidEntry')"
+          ></button>
+          <button
+            class="role-card hija"
+            aria-label="Hija"
+            onclick="showScreen('screenKidEntry')"
+          ></button>
+        </div>
+        <div class="role-select-footer">
+          Powered by Huge.soft using
+          <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a>
+        </div>
+      </div>
+    </div>
 
     <!-- ══════════════════════════════════════
      SCREEN: AUTH (padre, primera vez)
@@ -1249,9 +1275,9 @@
               position: relative;
               z-index: 99999;
             "
-            onclick="showScreen('screenKidEntry')"
+            onclick="showScreen('screenRoleSelect')"
           >
-            Soy hijo/a →
+            ← Volver
           </button>
         </div>
       </div>
@@ -1511,9 +1537,9 @@
               cursor: pointer;
               font-family: &quot;Nunito&quot;, sans-serif;
             "
-            onclick="showScreen('screenAuth')"
+            onclick="showScreen('screenRoleSelect')"
           >
-            Soy papá/mamá →
+            ← Volver
           </button>
         </div>
       </div>
@@ -1702,41 +1728,15 @@
       </div>
     </div>
 
-    <!-- TASK COMPLETE MODAL -->
-    <div class="modal-overlay" id="taskModal">
-      <div class="modal-sheet">
+    <!-- TASK DONE MODAL -->
+    <div class="modal-overlay" id="taskDoneModal">
+      <div class="modal-sheet" style="text-align: center">
         <div class="sheet-handle"></div>
-        <div class="modal-title">✅ Tarea completada</div>
-        <div
-          style="
-            font-size: 12px;
-            color: #9e8a7a;
-            font-weight: 700;
-            margin: 8px 0 4px;
-          "
-        >
-          ¿Cómo te sentís?
-        </div>
-        <div class="emoji-row">
-          <span class="emoji-btn" onclick="toggleEmoji(this, '🔥')">🔥</span>
-          <span class="emoji-btn" onclick="toggleEmoji(this, '✅')">✅</span>
-          <span class="emoji-btn" onclick="toggleEmoji(this, '💪')">💪</span>
-          <span class="emoji-btn" onclick="toggleEmoji(this, '😎')">😎</span>
-          <span class="emoji-btn" onclick="toggleEmoji(this, '⭐')">⭐</span>
-          <span class="emoji-btn" onclick="toggleEmoji(this, '🏆')">🏆</span>
-          <span class="emoji-btn" onclick="toggleEmoji(this, '🎉')">🎉</span>
-        </div>
-        <input
-          class="msg-input"
-          id="taskMsg"
-          placeholder="Mensaje opcional..."
-          maxlength="80"
-        />
-        <button class="btn-primary" onclick="submitTask()">
-          Marcar como hecha ✅
-        </button>
-        <button class="btn-outline" onclick="closeModal('taskModal')">
-          Cancelar
+        <div style="font-size: 44px; margin-bottom: 6px">🎉</div>
+        <div class="modal-title">¡Felicitaciones!</div>
+        <div class="modal-sub">Estás más cerca de tu recompensa</div>
+        <button class="btn-primary" onclick="closeModal('taskDoneModal')">
+          Cerrar
         </button>
       </div>
     </div>
@@ -2040,18 +2040,6 @@
         <div id="dadRewardsList"></div>
       </div>
 
-      <!-- Aprobar tareas -->
-      <div class="dad-card">
-        <div class="dad-card-title">✅ Aprobar tareas</div>
-        <div id="dadApprovalsList"></div>
-      </div>
-
-      <!-- Evidencias -->
-      <div class="dad-card">
-        <div class="dad-card-title">📸 Evidencias</div>
-        <div id="dadEvidenceList"></div>
-      </div>
-
       <div style="padding: 0 16px 16px">
         <button class="logout-btn" onclick="signOut()">🚪 Cerrar sesión</button>
         <button
@@ -2236,9 +2224,6 @@
         tasks: [],
         rewards: [],
         completions: [],
-        evidence: [],
-        selectedEmojis: [],
-        currentTaskId: null,
         kidPinTarget: null,
       };
       // PIN buffers
@@ -2347,6 +2332,12 @@
           navBtn.classList.add("active");
         }
       }
+      // Fallback por defecto para el botón "← Volver" de la pantalla de PIN.
+      // Se sobreescribe dinámicamente en selectKidProfile() y navToDad(),
+      // esto solo cubre el caso de que se dispare antes de esa asignación.
+      function pinBack() {
+        showScreen("screenRoleSelect");
+      }
 
       // ══════════════════════════════════════
       // AUTH
@@ -2367,7 +2358,6 @@
         const pid = S.user.id;
         const kidIds = S.kids.map((k) => k.id);
         if (kidIds.length) {
-          await sb.from("evidence").delete().in("kid_id", kidIds);
           await sb.from("completions").delete().in("kid_id", kidIds);
         }
         await sb.from("tasks").delete().eq("parent_id", pid);
@@ -2604,11 +2594,9 @@
           .map(
             (k) => `
     <div class="kid-list-item" onclick="selectKidProfile('${k.id}')">
-      <div class="profile-sprite ${k.gender === "girl" ? "girl" : "boy"}"></div>
-      <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
-        <div><div class="kid-list-name">${k.name}</div><div class="kid-list-role">${k.age} años</div></div>
-        <span style="font-size:20px;color:#c8a882;">›</span>
-      </div>
+      <span class="kid-list-icon">${kidEmoji(k.gender)}</span>
+      <div style="flex:1;"><div class="kid-list-name">${k.name}</div><div class="kid-list-role">${k.age} años</div></div>
+      <span style="font-size:20px;color:#c8a882;">›</span>
     </div>`,
           )
           .join("");
@@ -2685,7 +2673,6 @@
       // ══════════════════════════════════════
       function enterParentMode() {
         const pg = S.parent.gender;
-        console.log("parent object:", JSON.stringify(S.parent)); // DEBUG
         document.getElementById("navDadIcon").textContent = parentEmoji(pg);
         document.getElementById("navDadLabel").textContent =
           pg === "mother" ? "Mamá" : "Papá";
@@ -2739,23 +2726,14 @@
         if (S.kids.length && !S.currentKid) S.currentKid = S.kids[0].id;
         const ids = S.kids.map((k) => k.id);
         if (ids.length) {
-          const [cR, eR] = await Promise.all([
-            sb
-              .from("completions")
-              .select("*")
-              .in("kid_id", ids)
-              .eq("week_key", wk),
-            sb
-              .from("evidence")
-              .select("*")
-              .in("kid_id", ids)
-              .order("created_at", { ascending: false }),
-          ]);
-          S.completions = cR.data || [];
-          S.evidence = eR.data || [];
+          const { data: cData } = await sb
+            .from("completions")
+            .select("*")
+            .in("kid_id", ids)
+            .eq("week_key", wk);
+          S.completions = cData || [];
         } else {
           S.completions = [];
-          S.evidence = [];
         }
         setLoading(false);
       }
@@ -2783,20 +2761,12 @@
         S.rewards = rR.data || [];
         const kid = getKidObj();
         if (kid) {
-          const [cR, eR] = await Promise.all([
-            sb
-              .from("completions")
-              .select("*")
-              .eq("kid_id", kid.id)
-              .eq("week_key", wk),
-            sb
-              .from("evidence")
-              .select("*")
-              .eq("kid_id", kid.id)
-              .order("created_at", { ascending: false }),
-          ]);
-          S.completions = cR.data || [];
-          S.evidence = eR.data || [];
+          const { data: cData } = await sb
+            .from("completions")
+            .select("*")
+            .eq("kid_id", kid.id)
+            .eq("week_key", wk);
+          S.completions = cData || [];
         }
         setLoading(false);
       }
@@ -2876,8 +2846,6 @@
                 const done = S.completions.find(
                   (c) => c.kid_id === kid.id && c.task_id === t.id,
                 );
-                const isPending = done && done.status === "pending";
-                const isApproved = done && done.status === "approved";
                 const at = done
                   ? new Date(done.completed_at).toLocaleTimeString("es", {
                       hour: "2-digit",
@@ -2885,12 +2853,7 @@
                     })
                   : "";
                 const clickable = !done && !isParent;
-                const statusTxt = isPending
-                  ? " · ⏳ Esperando aprobación"
-                  : isApproved
-                    ? " · ✅ " + at
-                    : "";
-                return `<div class="task-item${done ? " done" : ""}${isPending ? " pending" : ""}${isParent ? " readonly" : ""}" ${clickable ? `onclick="openTaskModal('${t.id}')"` : ""}><div class="task-check">${isApproved ? "✓" : isPending ? "⏳" : ""}</div><div class="task-icon-wrap">${t.emoji}</div><div style="flex:1;"><div class="task-name-txt">${t.name}</div><div class="task-pts-txt">+${t.pts} pts${statusTxt}</div></div><span class="task-star">${isApproved ? "⭐" : "☆"}</span></div>`;
+                return `<div class="task-item${done ? " done" : ""}${isParent ? " readonly" : ""}" ${clickable ? `onclick="completeTask('${t.id}')"` : ""}><div class="task-check">${done ? "✓" : ""}</div><div class="task-icon-wrap">${t.emoji}</div><div style="flex:1;"><div class="task-name-txt">${t.name}</div><div class="task-pts-txt">+${t.pts} pts${done ? " · ✅ " + at : ""}</div></div><span class="task-star">${done ? "⭐" : "☆"}</span></div>`;
               })
               .join("")
           : '<div style="text-align:center;color:#c4b0a0;padding:28px;font-size:14px;font-weight:700;">Sin tareas asignadas</div>';
@@ -2932,87 +2895,31 @@
       }
 
       // ══════════════════════════════════════
-      // TASK COMPLETE
+      // TASK COMPLETE (un solo tap, suma puntos al toque)
       // ══════════════════════════════════════
-      function openTaskModal(taskId) {
-        S.currentTaskId = taskId;
-        S.selectedEmojis = [];
-        document.getElementById("taskMsg").value = "";
-        document
-          .querySelectorAll(".emoji-btn")
-          .forEach((e) => e.classList.remove("sel"));
-        document.getElementById("taskModal").classList.add("show");
-      }
-      function toggleEmoji(el, emoji) {
-        el.classList.toggle("sel");
-        S.selectedEmojis = el.classList.contains("sel")
-          ? [...S.selectedEmojis, emoji]
-          : S.selectedEmojis.filter((e) => e !== emoji);
-      }
-      async function submitTask() {
-        const taskId = S.currentTaskId;
-        if (!taskId) return;
+      async function completeTask(taskId) {
         const kid = getKidObj();
         const task = S.tasks.find((t) => t.id === taskId);
+        if (!kid || !task) return;
         const wk = getWeekKey();
         setLoading(true);
         await sb.from("completions").insert({
           kid_id: kid.id,
           task_id: taskId,
           week_key: wk,
-          status: "pending",
+          status: "approved",
         });
-        await sb.from("evidence").insert({
-          kid_id: kid.id,
-          task_id: taskId,
-          task_name: task.name,
-          emojis: S.selectedEmojis.join(" "),
-          message: document.getElementById("taskMsg").value.trim(),
-          photo_url: null,
-        });
-        // Los puntos NO se acreditan acá: quedan pendientes de aprobación del padre/madre.
-        closeModal("taskModal");
-        setLoading(false);
-        showToast("¡Tarea enviada! Esperando aprobación 🙌");
-        await loadFamilyData();
-        renderTasksScreen();
-      }
-      // ══════════════════════════════════════
-      // APROBACIÓN DE TAREAS (padre)
-      // ══════════════════════════════════════
-      async function approveCompletion(compId, kidId, taskId) {
-        const kid = S.kids.find((k) => k.id === kidId);
-        const task = S.tasks.find((t) => t.id === taskId);
-        if (!kid || !task) return;
-        setLoading(true);
-        await sb
-          .from("completions")
-          .update({ status: "approved" })
-          .eq("id", compId);
         await sb
           .from("kids")
           .update({
             pts: (kid.pts || 0) + task.pts,
             total_pts: (kid.total_pts || 0) + task.pts,
           })
-          .eq("id", kidId);
+          .eq("id", kid.id);
         setLoading(false);
-        showToast("¡Tarea aprobada! +" + task.pts + " pts 🎉");
-        await loadAll();
-        renderDadPanel();
-      }
-      // Rechazar tarea: existe a nivel de modelo de negocio, sin botón en la UI por ahora.
-      // La completion queda marcada como 'rejected' y no se acreditan puntos.
-      async function rejectCompletion(compId) {
-        setLoading(true);
-        await sb
-          .from("completions")
-          .update({ status: "rejected" })
-          .eq("id", compId);
-        setLoading(false);
-        showToast("Tarea rechazada");
-        await loadAll();
-        renderDadPanel();
+        document.getElementById("taskDoneModal").classList.add("show");
+        await loadFamilyData();
+        renderTasksScreen();
       }
 
       // ══════════════════════════════════════
@@ -3063,8 +2970,6 @@
         renderKidsSummary();
         renderTasksListDad();
         renderRewardsListDad();
-        renderApprovalsList();
-        renderEvidenceList();
         initTaskEmojiPicker();
         const sel = document.getElementById("newTaskKid");
         sel.innerHTML =
@@ -3078,16 +2983,13 @@
       }
 
       function renderKidsSummary() {
-        const wk = getWeekKey();
         document.getElementById("dadKidsSummary").innerHTML =
           S.kids
             .map((k) => {
               const kidTasks = S.tasks.filter(
                 (t) => t.kid_id === "both" || t.kid_id === k.id,
               );
-              const done = S.completions.filter(
-                (c) => c.kid_id === k.id && c.status === "approved",
-              );
+              const done = S.completions.filter((c) => c.kid_id === k.id);
               return `<div class="kid-summary-card">
       <div class="kid-summary-top">
         <span style="font-size:32px">${kidEmoji(k.gender)}</span>
@@ -3133,50 +3035,6 @@
               })
               .join("")
           : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">Sin recompensas</div>';
-      }
-
-      function renderApprovalsList() {
-        const el = document.getElementById("dadApprovalsList");
-        if (!el) return;
-        const pending = S.completions.filter((c) => c.status === "pending");
-        el.innerHTML = pending.length
-          ? pending
-              .map((c) => {
-                const kid = S.kids.find((k) => k.id === c.kid_id);
-                const task = S.tasks.find((t) => t.id === c.task_id);
-                if (!kid || !task) return "";
-                const at = new Date(c.completed_at).toLocaleString("es", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
-                return `<div class="ev-row"><span style="font-size:20px">${task.emoji}</span><div style="flex:1;"><div style="font-size:13px;font-weight:800;">${kidEmoji(kid.gender)} ${kid.name} · ${task.name}</div><div style="font-size:11px;color:#9e8a7a;margin-top:1px;">${at} · +${task.pts} pts</div></div><button class="approve-btn" onclick="approveCompletion('${c.id}','${kid.id}','${task.id}')">👍 Aprobar</button></div>`;
-              })
-              .join("")
-          : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">No hay tareas pendientes de aprobación</div>';
-      }
-
-      function renderEvidenceList() {
-        const el = document.getElementById("dadEvidenceList");
-        if (!el) return;
-        const allEv = S.evidence.filter((ev) =>
-          S.kids.some((k) => k.id === ev.kid_id),
-        );
-        el.innerHTML = allEv.length
-          ? allEv
-              .map((ev) => {
-                const kn = S.kids.find((k) => k.id === ev.kid_id)?.name || "?";
-                const at = new Date(ev.created_at).toLocaleString("es", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
-                return `<div class="ev-row"><div style="flex:1;"><div style="font-size:13px;font-weight:800;">${kn} · ${ev.task_name}</div><div style="font-size:13px;margin-top:2px;">${ev.emojis || ""} ${ev.message || ""}</div><div style="font-size:11px;color:#9e8a7a;margin-top:1px;">${at}</div></div>${ev.approved ? '<span class="approved-lbl">✓</span>' : `<button class="approve-btn" onclick="approveEvidence('${ev.id}','${ev.kid_id}')">👍 +5pts</button>`}</div>`;
-              })
-              .join("")
-          : '<div style="color:#c4b0a0;font-size:13px;padding:8px 0;">Sin evidencias aún</div>';
       }
 
       // ══════════════════════════════════════
@@ -3318,22 +3176,6 @@
               )
               .join("");
       }
-      async function approveEvidence(evId, kidId) {
-        const kid = S.kids.find((k) => k.id === kidId);
-        if (!kid) return;
-        await sb.from("evidence").update({ approved: true }).eq("id", evId);
-        await sb
-          .from("kids")
-          .update({
-            pts: (kid.pts || 0) + 5,
-            total_pts: (kid.total_pts || 0) + 5,
-          })
-          .eq("id", kidId);
-        showToast("¡Aprobado! +5 pts 👍");
-        await loadAll();
-        renderEvidenceList();
-        renderKidsSummary();
-      }
 
       // ══════════════════════════════════════
       // KID PIN
@@ -3433,9 +3275,6 @@
         document.getElementById("historyContent").innerHTML = kidsToShow
           .map((kid) => {
             const done = comps.filter((c) => c.kid_id === kid.id);
-            const approvedCount = done.filter(
-              (c) => c.status === "approved",
-            ).length;
             const rows = done
               .map((c) => {
                 const t = S.tasks.find((t) => t.id === c.task_id);
@@ -3443,17 +3282,11 @@
                   hour: "2-digit",
                   minute: "2-digit",
                 });
-                const statusLbl =
-                  c.status === "pending"
-                    ? "⏳ Pendiente"
-                    : c.status === "rejected"
-                      ? "❌ Rechazada"
-                      : "✅ Aprobada";
-                return `<div class="hist-row"><span style="font-size:16px">${t?.emoji || "📌"}</span><span style="flex:1;font-size:13px;font-weight:700;">${t?.name || "Tarea"}</span><span style="font-size:11px;font-weight:700;color:#9e8a7a;">${statusLbl}</span><span style="font-size:12px;font-weight:800;color:#7c5cbf;">+${t?.pts || 0}pts</span><span style="font-size:11px;color:#9e8a7a;">${at}</span></div>`;
+                return `<div class="hist-row"><span style="font-size:16px">${t?.emoji || "📌"}</span><span style="flex:1;font-size:13px;font-weight:700;">${t?.name || "Tarea"}</span><span style="font-size:12px;font-weight:800;color:#7c5cbf;">+${t?.pts || 0}pts</span><span style="font-size:11px;color:#9e8a7a;">${at}</span></div>`;
               })
               .join("");
             const ar = kid.active_reward;
-            return `<div style="font-size:13px;font-weight:900;color:#7c5cbf;padding:12px 16px 6px;text-transform:uppercase;letter-spacing:.5px;">${kidEmoji(kid.gender)} ${kid.name} · ${approvedCount} tarea${approvedCount !== 1 ? "s" : ""} aprobada${approvedCount !== 1 ? "s" : ""}</div>${rows || '<div style="padding:8px 16px;color:#c4b0a0;font-size:13px;">Sin actividad</div>'}${ar ? `<div style="padding:6px 16px 10px;font-size:12px;font-weight:700;color:#7c5cbf;">🏆 ${ar.emoji} ${ar.name}</div>` : ""}`;
+            return `<div style="font-size:13px;font-weight:900;color:#7c5cbf;padding:12px 16px 6px;text-transform:uppercase;letter-spacing:.5px;">${kidEmoji(kid.gender)} ${kid.name} · ${done.length} tarea${done.length !== 1 ? "s" : ""}</div>${rows || '<div style="padding:8px 16px;color:#c4b0a0;font-size:13px;">Sin actividad</div>'}${ar ? `<div style="padding:6px 16px 10px;font-size:12px;font-weight:700;color:#7c5cbf;">🏆 ${ar.emoji} ${ar.name}</div>` : ""}`;
           })
           .join("");
       }
@@ -3470,7 +3303,7 @@
           setTimeout(() => {
             if (!S.user) {
               setLoading(false);
-              showScreen("screenKidEntry");
+              showScreen("screenRoleSelect");
             }
           }, 4000);
           return;
@@ -3495,7 +3328,7 @@
         }
         if (!session) {
           setLoading(false);
-          showScreen("screenKidEntry");
+          showScreen("screenRoleSelect");
           return;
         }
         S.user = session.user;
